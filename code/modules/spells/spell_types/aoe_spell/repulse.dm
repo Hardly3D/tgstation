@@ -6,6 +6,23 @@
 	/// The moveforce of the throw done by the repulsion.
 	var/repulse_force = MOVE_FORCE_EXTREMELY_STRONG
 
+/datum/action/cooldown/spell/aoe/repulse/get_caster_from_target(atom/target)
+	if(istype(target.loc, /obj/structure/closet))
+		return target
+
+	return ..()
+
+/datum/action/cooldown/spell/aoe/repulse/is_valid_target(atom/cast_on)
+	return ..() || istype(cast_on.loc, /obj/structure/closet)
+
+/datum/action/cooldown/spell/aoe/repulse/cast(atom/cast_on)
+	if(istype(cast_on.loc, /obj/structure/closet))
+		var/obj/structure/closet/open_closet = cast_on.loc
+		open_closet.open(force = TRUE)
+		open_closet.visible_message(span_warning("[open_closet] suddenly flies open!"))
+
+	return ..()
+
 /datum/action/cooldown/spell/aoe/repulse/get_things_to_cast_on(atom/center)
 	var/list/things = list()
 	for(var/atom/movable/nearby_movable in view(aoe_radius, center))
@@ -44,13 +61,19 @@
 			to_chat(victim, span_userdanger("You're thrown back by [caster]!"))
 
 		// So stuff gets tossed around at the same time.
-		victim.safe_throw_at(throwtarget, ((clamp((max_throw - (clamp(dist_from_caster - 2, 0, dist_from_caster))), 3, max_throw))), 1, caster, force = repulse_force)
+		victim.safe_throw_at(
+			target = throwtarget,
+			range = clamp((max_throw - (clamp(dist_from_caster - 2, 0, dist_from_caster))), 3, max_throw),
+			speed = 1,
+			thrower = ismob(caster) ? caster : null,
+			force = repulse_force,
+		)
 
 /datum/action/cooldown/spell/aoe/repulse/wizard
 	name = "Repulse"
 	desc = "This spell throws everything around the user away."
 	button_icon_state = "repulse"
-	sound = 'sound/magic/repulse.ogg'
+	sound = 'sound/effects/magic/repulse.ogg'
 
 	school = SCHOOL_EVOCATION
 	invocation = "GITTAH WEIGH"
@@ -68,7 +91,7 @@
 	button_icon = 'icons/mob/actions/actions_xeno.dmi'
 	button_icon_state = "tailsweep"
 	panel = "Alien"
-	sound = 'sound/magic/tail_swing.ogg'
+	sound = 'sound/effects/magic/tail_swing.ogg'
 
 	cooldown_time = 15 SECONDS
 	spell_requirements = NONE
@@ -83,7 +106,7 @@
 /datum/action/cooldown/spell/aoe/repulse/xeno/cast(atom/cast_on)
 	if(iscarbon(cast_on))
 		var/mob/living/carbon/carbon_caster = cast_on
-		playsound(get_turf(carbon_caster), 'sound/voice/hiss5.ogg', 80, TRUE, TRUE)
+		playsound(get_turf(carbon_caster), 'sound/mobs/non-humanoids/hiss/hiss5.ogg', 80, TRUE, TRUE)
 		carbon_caster.spin(6, 1)
 
 	return ..()

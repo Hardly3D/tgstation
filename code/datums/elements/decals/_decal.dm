@@ -1,5 +1,5 @@
 /datum/element/decal
-	element_flags = ELEMENT_BESPOKE|ELEMENT_DETACH_ON_HOST_DESTROY
+	element_flags = ELEMENT_BESPOKE|ELEMENT_DETACH_ON_HOST_DESTROY|ELEMENT_DONT_SORT_LIST_ARGS
 	argument_hash_start_idx = 2
 	/// Whether this decal can be cleaned.
 	var/cleanable
@@ -113,7 +113,7 @@
 	return TRUE
 
 /datum/element/decal/Detach(atom/source)
-	UnregisterSignal(source, list(COMSIG_ATOM_DIR_CHANGE, COMSIG_COMPONENT_CLEAN_ACT, COMSIG_ATOM_EXAMINE, COMSIG_ATOM_UPDATE_OVERLAYS, COMSIG_TURF_ON_SHUTTLE_MOVE, COMSIG_ATOM_SMOOTHED_ICON))
+	UnregisterSignal(source, list(COMSIG_ATOM_DIR_CHANGE, COMSIG_COMPONENT_CLEAN_ACT, COMSIG_ATOM_EXAMINE, COMSIG_ATOM_UPDATE_OVERLAYS, COMSIG_TURF_ON_SHUTTLE_MOVE, COMSIG_ATOM_SMOOTHED_ICON, COMSIG_ATOM_DECALS_ROTATING))
 	SSdcs.UnregisterSignal(source, COMSIG_ATOM_DIR_CHANGE)
 	source.update_appearance(UPDATE_OVERLAYS)
 	if(isitem(source))

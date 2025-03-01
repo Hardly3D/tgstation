@@ -4,7 +4,7 @@
 		instantly summoning a swarm of bees to your location. \
 		These bees are NOT friendly to anyone."
 	button_icon_state = "bee"
-	sound = 'sound/voice/moth/scream_moth.ogg'
+	sound = 'sound/mobs/humanoids/moth/scream_moth.ogg'
 
 	school = SCHOOL_CONJURATION
 	cooldown_time = 1 MINUTES
@@ -14,5 +14,5 @@
 	invocation_type = INVOCATION_SHOUT
 
 	summon_radius = 3
-	summon_type = list(/mob/living/simple_animal/hostile/bee/toxin)
+	summon_type = list(/mob/living/basic/bee/toxin)
 	summon_amount = 9

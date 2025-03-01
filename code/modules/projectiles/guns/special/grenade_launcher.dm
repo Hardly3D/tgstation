@@ -16,6 +16,14 @@
 	. = ..()
 	. += "[grenades.len] / [max_grenades] grenades loaded."
 
+/obj/item/gun/grenadelauncher/apply_fantasy_bonuses(bonus)
+	. = ..()
+	max_grenades = modify_fantasy_variable("max_syringes", max_grenades, bonus, minimum = 1)
+
+/obj/item/gun/grenadelauncher/remove_fantasy_bonuses(bonus)
+	max_grenades = reset_fantasy_variable("max_syringes", max_grenades)
+	return ..()
+
 /obj/item/gun/grenadelauncher/attackby(obj/item/I, mob/user, params)
 
 	if(istype(I, /obj/item/grenade/c4))
@@ -44,5 +52,5 @@
 	user.log_message("fired a grenade ([F.name]) with a grenade launcher ([src]) from [AREACOORD(user)] at [target] [AREACOORD(target)].", LOG_ATTACK, log_globally = FALSE)
 	F.active = 1
 	F.icon_state = initial(F.icon_state) + "_active"
-	playsound(user.loc, 'sound/weapons/armbomb.ogg', 75, TRUE, -3)
-	addtimer(CALLBACK(F, TYPE_PROC_REF(/obj/item/grenade, detonate)), 15)
+	playsound(user.loc, 'sound/items/weapons/armbomb.ogg', 75, TRUE, -3)
+	addtimer(CALLBACK(F, TYPE_PROC_REF(/obj/item/grenade, detonate)), 1.5 SECONDS)

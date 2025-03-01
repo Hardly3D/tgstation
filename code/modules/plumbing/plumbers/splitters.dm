@@ -3,11 +3,8 @@
 	name = "chemical splitter"
 	desc = "A chemical splitter for smart chemical factorization. Waits till a set of conditions is met and then stops all input and splits the buffer evenly or other in two ducts."
 	icon_state = "splitter"
-	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 2
 	buffer = 100
 	density = FALSE
-	///category for plumbing RCD
-	category="Distribution"
 
 	///constantly switches between TRUE and FALSE. TRUE means the batch tick goes straight, FALSE means the next batch goes in the side duct.
 	var/turn_straight = TRUE
@@ -35,7 +32,7 @@
 	data["max_transfer"] = max_transfer
 	return data
 
-/obj/machinery/plumbing/splitter/ui_act(action, params)
+/obj/machinery/plumbing/splitter/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	if(.)
 		return

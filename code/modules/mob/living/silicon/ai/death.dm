@@ -1,4 +1,4 @@
-/mob/living/silicon/ai/death(gibbed)
+/mob/living/silicon/ai/death(gibbed, drop_mmi = TRUE)
 	if(stat == DEAD)
 		return
 
@@ -21,8 +21,6 @@
 	if(icon_exists(icon, "[base_icon]_death_transition"))
 		flick("[base_icon]_death_transition", src)
 
-	cameraFollow = null
-
 	if(is_anchored)
 		flip_anchored()
 
@@ -35,10 +33,10 @@
 
 	ShutOffDoomsdayDevice()
 
-	if(gibbed)
+	if(gibbed && drop_mmi)
 		make_mmi_drop_and_transfer()
 
-	if(explosive)
+	if(explodes_on_death)
 		addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(explosion), loc, 3, 6, 12, null, 15), 1 SECONDS)
 
 	SSblackbox.ReportDeath(src)

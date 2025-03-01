@@ -35,15 +35,11 @@
 			icon = alt_icon
 			alt_icon = old_icon
 		icon_state = "alien[caste]_leap"
-		pixel_x = base_pixel_x - 32
-		pixel_y = base_pixel_y - 32
 	else
 		if(alt_icon != initial(alt_icon))
 			var/old_icon = icon
 			icon = alt_icon
 			alt_icon = old_icon
-	pixel_x = base_pixel_x + body_position_pixel_x_offset
-	pixel_y = base_pixel_y + body_position_pixel_y_offset
 	update_held_items()
 	update_worn_handcuffs()
 
@@ -67,7 +63,7 @@
 
 	if(handcuffed)
 		var/mutable_appearance/handcuff_overlay = mutable_appearance(dmi_file, cuff_icon, -HANDCUFF_LAYER)
-		if(handcuffed.blocks_emissive)
+		if(handcuffed.blocks_emissive != EMISSIVE_BLOCK_NONE)
 			handcuff_overlay += emissive_blocker(handcuff_overlay.icon, handcuff_overlay.icon_state, src, alpha = handcuff_overlay.alpha)
 
 		overlays_standing[HANDCUFF_LAYER] = handcuff_overlay
@@ -76,7 +72,7 @@
 
 //Royals have bigger sprites, so inhand things must be handled differently.
 /mob/living/carbon/alien/adult/royal/update_held_items()
-	..()
+	. = ..()
 	remove_overlay(HANDS_LAYER)
 	var/list/hands = list()
 
@@ -86,7 +82,7 @@
 		if(!itm_state)
 			itm_state = l_hand.icon_state
 		var/mutable_appearance/l_hand_item = mutable_appearance(alt_inhands_file, "[itm_state][caste]_l", -HANDS_LAYER)
-		if(l_hand.blocks_emissive)
+		if(l_hand.blocks_emissive != EMISSIVE_BLOCK_NONE)
 			l_hand_item.overlays += emissive_blocker(l_hand_item.icon, l_hand_item.icon_state, src, alpha = l_hand_item.alpha)
 		hands += l_hand_item
 
@@ -96,7 +92,7 @@
 		if(!itm_state)
 			itm_state = r_hand.icon_state
 		var/mutable_appearance/r_hand_item = mutable_appearance(alt_inhands_file, "[itm_state][caste]_r", -HANDS_LAYER)
-		if(r_hand.blocks_emissive)
+		if(r_hand.blocks_emissive != EMISSIVE_BLOCK_NONE)
 			r_hand_item.overlays += emissive_blocker(r_hand_item.icon, r_hand_item.icon_state, src, alpha = r_hand_item.alpha)
 		hands += r_hand_item
 

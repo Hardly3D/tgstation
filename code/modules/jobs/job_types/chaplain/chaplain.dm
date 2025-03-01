@@ -25,13 +25,12 @@
 
 	mail_goodies = list(
 		/obj/item/reagent_containers/cup/glass/bottle/holywater = 30,
-		/obj/item/toy/plush/awakenedplushie = 10,
 		/obj/item/grenade/chem_grenade/holy = 5,
 		/obj/item/toy/plush/narplush = 2,
 		/obj/item/toy/plush/ratplush = 1
 	)
 	rpg_title = "Paladin"
-	job_flags = JOB_ANNOUNCE_ARRIVAL | JOB_CREW_MANIFEST | JOB_EQUIP_RANK | JOB_CREW_MEMBER | JOB_NEW_PLAYER_JOINABLE | JOB_REOPEN_ON_ROUNDSTART_LOSS | JOB_ASSIGN_QUIRKS | JOB_CAN_BE_INTERN
+	job_flags = STATION_JOB_FLAGS
 
 	voice_of_god_power = 2 //Chaplains are very good at speaking with the voice of god
 
@@ -70,7 +69,7 @@
 	var/new_bible = player_client?.prefs?.read_preference(/datum/preference/name/bible) || DEFAULT_BIBLE
 
 	holy_bible.deity_name = new_deity
-	switch(lowertext(new_religion))
+	switch(LOWER_TEXT(new_religion))
 		if("homosexuality", "gay", "penis", "ass", "cock", "cocks")
 			new_bible = pick("Guys Gone Wild","Coming Out of The Closet","War of Cocks")
 			switch(new_bible)
@@ -79,8 +78,8 @@
 				else
 					holy_bible.deity_name = pick("Gay Space Jesus", "Gandalf", "Dumbledore")
 			human_spawned.adjustOrganLoss(ORGAN_SLOT_BRAIN, 100) // starts off brain damaged as fuck
-		if("lol", "wtf", "poo", "badmin", "shitmin", "deadmin", "meme", "memes")
-			new_bible = pick("Woody's Got Wood: The Aftermath", "Sweet Bro and Hella Jeff: Expanded Edition","F.A.T.A.L. Rulebook")
+		if("lol", "wtf", "poo", "badmin", "shitmin", "deadmin", "meme", "memes", "skibidi")
+			new_bible = pick("Woody's Got Wood: The Aftermath", "Sweet Bro and Hella Jeff: Expanded Edition","F.A.T.A.L. Rulebook", "Toilet Humor")
 			switch(new_bible)
 				if("Woody's Got Wood: The Aftermath")
 					holy_bible.deity_name = pick("Woody", "Andy", "Cherry Flavored Lube")
@@ -88,6 +87,8 @@
 					holy_bible.deity_name = pick("Sweet Bro", "Hella Jeff", "Stairs", "AH")
 				if("F.A.T.A.L. Rulebook")
 					holy_bible.deity_name = "Twenty Ten-Sided Dice"
+				if("Toilet Humor")
+					holy_bible.deity_name = pick("Skibidi Toilet", "Skibidi Wizard", "Skibidi Bathtub", "John Skibidi", "Skibidi Skibidi", "G-Toilet 1.0", "John Freeman")
 			human_spawned.adjustOrganLoss(ORGAN_SLOT_BRAIN, 100) // also starts off brain damaged as fuck
 		if("servicianism", "partying")
 			holy_bible.desc = "Happy, Full, Clean. Live it and give it."

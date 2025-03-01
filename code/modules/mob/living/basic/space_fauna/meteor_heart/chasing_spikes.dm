@@ -1,28 +1,29 @@
 /// An ability which makes spikes come out of the ground towards your target
-/datum/action/cooldown/chasing_spikes
+/datum/action/cooldown/mob_cooldown/chasing_spikes
 	name = "impaling tendril"
 	desc = "Send a spiked subterranean tendril chasing after your target."
 	button_icon = 'icons/mob/simple/meteor_heart.dmi'
 	button_icon_state = "spike"
 	cooldown_time = 10 SECONDS
 	click_to_activate = TRUE
+	shared_cooldown = NONE
 	/// Lazy list of references to spike trails
 	var/list/active_chasers
 
-/datum/action/cooldown/chasing_spikes/Activate(atom/target)
+/datum/action/cooldown/mob_cooldown/chasing_spikes/Activate(atom/target)
 	. = ..()
-	playsound(owner, 'sound/magic/demon_attack1.ogg', vol = 100, vary = TRUE, pressure_affected = FALSE)
+	playsound(owner, 'sound/effects/magic/demon_attack1.ogg', vol = 100, vary = TRUE, pressure_affected = FALSE)
 	var/obj/effect/temp_visual/effect_trail/spike_chaser/chaser = new(get_turf(owner), target)
 	LAZYADD(active_chasers, WEAKREF(chaser))
 	RegisterSignal(chaser, COMSIG_QDELETING, PROC_REF(on_chaser_destroyed))
 
 /// Remove a spike trail from our list of active trails
-/datum/action/cooldown/chasing_spikes/proc/on_chaser_destroyed(atom/chaser)
+/datum/action/cooldown/mob_cooldown/chasing_spikes/proc/on_chaser_destroyed(atom/chaser)
 	SIGNAL_HANDLER
 	LAZYREMOVE(active_chasers, WEAKREF(chaser))
 
 // Clean up after ourselves
-/datum/action/cooldown/chasing_spikes/Remove(mob/removed_from)
+/datum/action/cooldown/mob_cooldown/chasing_spikes/Remove(mob/removed_from)
 	QDEL_LIST(active_chasers)
 	return ..()
 
@@ -74,6 +75,6 @@
 		var/target_zone = victim.resting ? BODY_ZONE_CHEST : pick_weight(standing_damage_zones)
 		victim.apply_damage(impale_damage, damagetype = BRUTE, def_zone = target_zone, sharpness = SHARP_POINTY)
 	if (hit_someone)
-		playsound(src, 'sound/weapons/slice.ogg', vol = 50, vary = TRUE, pressure_affected = FALSE)
+		playsound(src, 'sound/items/weapons/slice.ogg', vol = 50, vary = TRUE, pressure_affected = FALSE)
 	else
 		playsound(src, 'sound/misc/splort.ogg', vol = 25, vary = TRUE, pressure_affected = FALSE)

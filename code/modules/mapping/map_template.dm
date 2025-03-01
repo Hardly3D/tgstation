@@ -29,6 +29,8 @@
 	var/list/ceiling_baseturfs = list()
 
 /datum/map_template/New(path = null, rename = null, cache = FALSE)
+	SHOULD_CALL_PARENT(TRUE)
+	. = ..()
 	if(path)
 		mappath = path
 	if(mappath)
@@ -59,17 +61,9 @@
 	var/list/area/areas = list()
 
 	var/list/turfs = block(
-		locate(
-			bounds[MAP_MINX],
-			bounds[MAP_MINY],
-			bounds[MAP_MINZ]
-			),
-		locate(
-			bounds[MAP_MAXX],
-			bounds[MAP_MAXY],
-			bounds[MAP_MAXZ]
-			)
-		)
+		bounds[MAP_MINX], bounds[MAP_MINY], bounds[MAP_MINZ],
+		bounds[MAP_MAXX], bounds[MAP_MAXY], bounds[MAP_MAXZ]
+	)
 	for(var/turf/current_turf as anything in turfs)
 		var/area/current_turfs_area = current_turf.loc
 		areas |= current_turfs_area
@@ -109,21 +103,12 @@
 	// need these two below?
 	SSmachines.setup_template_powernets(cables)
 	SSair.setup_template_machinery(atmos_machines)
-	SSshuttle.setup_shuttles(ports)
 
 	//calculate all turfs inside the border
 	var/list/template_and_bordering_turfs = block(
-		locate(
-			max(bounds[MAP_MINX]-1, 1),
-			max(bounds[MAP_MINY]-1, 1),
-			bounds[MAP_MINZ]
-			),
-		locate(
-			min(bounds[MAP_MAXX]+1, world.maxx),
-			min(bounds[MAP_MAXY]+1, world.maxy),
-			bounds[MAP_MAXZ]
-			)
-		)
+		bounds[MAP_MINX]-1, bounds[MAP_MINY]-1, bounds[MAP_MINZ],
+		bounds[MAP_MAXX]+1, bounds[MAP_MAXY]+1, bounds[MAP_MAXZ]
+	)
 	for(var/turf/affected_turf as anything in template_and_bordering_turfs)
 		affected_turf.air_update_turf(TRUE, TRUE)
 		affected_turf.levelupdate()
@@ -133,7 +118,15 @@
 	var/y = round((world.maxy - height) * 0.5) + 1
 
 	var/datum/space_level/level = SSmapping.add_new_zlevel(name, secret ? ZTRAITS_AWAY_SECRET : ZTRAITS_AWAY, contain_turfs = FALSE)
-	var/datum/parsed_map/parsed = load_map(file(mappath), x, y, level.z_value, no_changeturf=(SSatoms.initialized == INITIALIZATION_INSSATOMS), placeOnTop=should_place_on_top, new_z = TRUE)
+	var/datum/parsed_map/parsed = load_map(
+		file(mappath),
+		x,
+		y,
+		level.z_value,
+		no_changeturf = (SSatoms.initialized == INITIALIZATION_INSSATOMS),
+		place_on_top = should_place_on_top,
+		new_z = TRUE,
+	)
 	var/list/bounds = parsed.bounds
 	if(!bounds)
 		return FALSE
@@ -176,7 +169,14 @@
 
 	UNSETEMPTY(turf_blacklist)
 	parsed.turf_blacklist = turf_blacklist
-	if(!parsed.load(T.x, T.y, T.z, cropMap=TRUE, no_changeturf=(SSatoms.initialized == INITIALIZATION_INSSATOMS), placeOnTop=should_place_on_top))
+	if(!parsed.load(
+		T.x,
+		T.y,
+		T.z,
+		crop_map = TRUE,
+		no_changeturf = (SSatoms.initialized == INITIALIZATION_INSSATOMS),
+		place_on_top = should_place_on_top,
+	))
 		return
 
 	var/list/bounds = parsed.bounds
@@ -214,7 +214,7 @@
 		var/turf/corner = locate(placement.x - round(width/2), placement.y - round(height/2), placement.z)
 		if(corner)
 			placement = corner
-	return block(placement, locate(placement.x+width-1, placement.y+height-1, placement.z))
+	return block(placement.x, placement.y, placement.z, placement.x+width-1, placement.y+height-1, placement.z)
 
 /// Takes in a type path, locates an instance of that type in the cached map, and calculates its offset from the origin of the map, returns this offset in the form list(x, y).
 /datum/map_template/proc/discover_offset(obj/marker)

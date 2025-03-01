@@ -129,7 +129,8 @@
 
 /datum/outfit/cryobartender
 	name = "Cryogenic Bartender"
-	uniform = /obj/item/clothing/under/rank/civilian/bartender
+	neck = /obj/item/clothing/neck/bowtie
+	uniform = /obj/item/clothing/under/costume/buttondown/slacks/service
 	suit = /obj/item/clothing/suit/armor/vest
 	back = /obj/item/storage/backpack
 	glasses = /obj/item/clothing/glasses/sunglasses/reagent
@@ -166,7 +167,7 @@
 			message = "<b>You wished for power. Little good it did you, cast out of the light. You are the [gender == MALE ? "king" : "queen"] of a hell that holds no subjects. You feel only remorse.</b>"
 		if(4)
 			message = "<b>You wished for immortality, even as your friends lay dying behind you. No matter how many times you cast yourself into the lava, you awaken in this room again within a few days. There is no escape.</b>"
-	to_chat(new_spawn, "<span class='infoplain'>[message]</span>")
+	to_chat(new_spawn, span_infoplain("[message]"))
 
 /obj/effect/mob_spawn/ghost_role/human/nanotrasensoldier
 	name = "sleeper"
@@ -272,7 +273,7 @@
 /obj/effect/mob_spawn/ghost_role/human/syndicatespace/special(mob/living/new_spawn)
 	. = ..()
 	new_spawn.grant_language(/datum/language/codespeak, source = LANGUAGE_MIND)
-	var/datum/job/spawn_job = SSjob.GetJobType(spawner_job_path)
+	var/datum/job/spawn_job = SSjob.get_job_type(spawner_job_path)
 	var/policy = get_policy(spawn_job.policy_index)
 	if(policy)
 		to_chat(new_spawn, span_bold("[policy]"))
@@ -307,7 +308,7 @@
 
 /datum/outfit/syndicatespace/syndicrew
 	name = "Syndicate Ship Crew Member"
-	glasses = /obj/item/clothing/glasses/night
+	glasses = /obj/item/clothing/glasses/night/colorless
 	mask = /obj/item/clothing/mask/gas/syndicate
 	l_pocket = /obj/item/gun/ballistic/automatic/pistol
 	r_pocket = /obj/item/knife/combat/survival

@@ -92,7 +92,6 @@
 		return
 	if(!user.put_in_hands(weapon))
 		weapon.forceMove(get_turf(src))
-	update_appearance()
 
 /**
  * check_menu: Checks if we are allowed to interact with a radial menu
@@ -105,11 +104,12 @@
 		return FALSE
 	if(!istype(user))
 		return FALSE
-	if(user.incapacitated())
+	if(user.incapacitated)
 		return FALSE
 	return TRUE
 
-/obj/structure/guncase/handle_atom_del(atom/A)
+/obj/structure/guncase/Exited(atom/movable/gone, direction)
+	. = ..()
 	update_appearance()
 
 /obj/structure/guncase/contents_explosion(severity, target)
@@ -130,7 +130,6 @@
 /obj/structure/guncase/ecase
 	name = "energy gun locker"
 	desc = "A locker that holds energy guns."
-	icon_state = "ecase"
 	case_type = "egun"
 	gun_category = /obj/item/gun/energy/e_gun
 

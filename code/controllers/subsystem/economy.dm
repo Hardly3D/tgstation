@@ -28,7 +28,9 @@ SUBSYSTEM_DEF(economy)
 	  * A list of sole account datums can be obtained with flatten_list(), another variable would be redundant rn.
 	  */
 	var/list/bank_accounts_by_id = list()
-	///List of the departmental budget cards in existance.
+	/// A list of bank accounts indexed by their assigned job typepath.
+	var/list/bank_accounts_by_job = list()
+	///List of the departmental budget cards in existence.
 	var/list/dep_cards = list()
 	/// A var that collects the total amount of credits owned in player accounts on station, reset and recounted on fire()
 	var/station_total = 0
@@ -52,10 +54,6 @@ SUBSYSTEM_DEF(economy)
 	 */
 	var/list/audit_log = list()
 
-	/// Total value of exported materials.
-	var/export_total = 0
-	/// Total value of imported goods.
-	var/import_total = 0
 	/// Number of mail items generated.
 	var/mail_waiting = 0
 	/// Mail Holiday: AKA does mail arrive today? Always blocked on Sundays.
@@ -113,24 +111,6 @@ SUBSYSTEM_DEF(economy)
 			return
 
 		processing_part = ECON_PRICE_UPDATE_STEP
-		var/list/obj/machinery/vending/prices_to_update = list()
-		// Assoc list of "z level" -> if it's on the station
-		// Hack, is station z level is too expensive to do for each machine, I hate this place
-		var/list/station_z_status = list()
-		for(var/obj/machinery/vending/vending_lad as anything in SSmachines.get_machines_by_type_and_subtypes(/obj/machinery/vending))
-			if(istype(vending_lad, /obj/machinery/vending/custom))
-				continue
-			var/vending_level = vending_lad.z
-			var/station_status = station_z_status["[vending_level]"]
-			if(station_status == null)
-				station_status = is_station_level(vending_level)
-				station_z_status["[vending_level]"] = station_status
-			if(!station_status)
-				continue
-
-			prices_to_update += vending_lad
-
-		cached_processing = prices_to_update
 		station_target = max(round(temporary_total / max(bank_accounts_by_id.len * 2, 1)) + station_target_buffer, 1)
 
 	if(processing_part == ECON_PRICE_UPDATE_STEP)
@@ -139,6 +119,8 @@ SUBSYSTEM_DEF(economy)
 
 	var/effective_mailcount = round(living_player_count()/(inflation_value - 0.5)) //More mail at low inflation, and vis versa.
 	mail_waiting += clamp(effective_mailcount, 1, MAX_MAIL_PER_MINUTE * seconds_per_tick)
+
+	SSstock_market.news_string = ""
 
 /**
  * Handy proc for obtaining a department's bank account, given the department ID, AKA the define assigned for what department they're under.
@@ -182,20 +164,31 @@ SUBSYSTEM_DEF(economy)
 	return TRUE
 
 /**
- * Updates the prices of all station vendors with the inflation_value, increasing/decreasing costs across the station, and alerts the crew.
- *
- * Iterates over the machines list for vending machines, resets their regular and premium product prices (Not contraband), and sends a message to the newscaster network.
+ * Updates the the inflation_value, effecting newscaster alerts and the mail system.
  **/
 /datum/controller/subsystem/economy/proc/price_update()
-	var/list/cached_processing = src.cached_processing
-	for(var/i in 1 to length(cached_processing))
-		var/obj/machinery/vending/V = cached_processing[i]
-		V.reset_prices(V.product_records, V.coin_records)
-		if(MC_TICK_CHECK)
-			cached_processing.Cut(1, i + 1)
-			return FALSE
-	earning_report = "<b>Sector Economic Report</b><br><br> Sector vendor prices is currently at <b>[SSeconomy.inflation_value()*100]%</b>.<br><br> The station spending power is currently <b>[station_total] Credits</b>, and the crew's targeted allowance is at <b>[station_target] Credits</b>.<br><br> That's all from the <i>Nanotrasen Economist Division</i>."
-	GLOB.news_network.submit_article(earning_report, "Station Earnings Report", "Station Announcements", null, update_alert = FALSE)
+	var/fluff_string = ""
+	if(!HAS_TRAIT(SSeconomy, TRAIT_MARKET_CRASHING))
+		fluff_string = ", but company countermeasures protect <b>YOU</b> from being affected!"
+	else
+		fluff_string = ", and company countermeasures are failing to protect <b>YOU</b> from being affected. We're all doomed!"
+	earning_report = "<b>Sector Economic Report</b><br><br> Sector vendor prices is currently at <b>[SSeconomy.inflation_value()*100]%</b>[fluff_string]<br><br> The station spending power is currently <b>[station_total] Credits</b>, and the crew's targeted allowance is at <b>[station_target] Credits</b>.<br><br>[SSstock_market.news_string]"
+	var/update_alerts = FALSE
+	if(HAS_TRAIT(SSstation, STATION_TRAIT_ECONOMY_ALERTS))
+		var/datum/bank_account/moneybags
+		var/static/list/typecache_bank = typecacheof(list(/datum/bank_account/department, /datum/bank_account/remote))
+		for(var/i in bank_accounts_by_id)
+			var/datum/bank_account/current_acc = bank_accounts_by_id[i]
+			if(typecache_bank[current_acc.type])
+				continue
+			if(!moneybags || moneybags.account_balance < current_acc.account_balance)
+				moneybags = current_acc
+		if (moneybags)
+			earning_report += "Our GMM Spotlight would like to alert you that <b>[moneybags.account_holder]</b> is your station's most affulent crewmate! They've hit it big with [moneybags.account_balance] credits saved. "
+			update_alerts = TRUE
+			inflict_moneybags(moneybags)
+	earning_report += "That's all from the <i>Nanotrasen Economist Division</i>."
+	GLOB.news_network.submit_article(earning_report, "Station Earnings Report", "Station Announcements", null, update_alert = update_alerts)
 	return TRUE
 
 /**
@@ -208,6 +201,8 @@ SUBSYSTEM_DEF(economy)
 /datum/controller/subsystem/economy/proc/inflation_value()
 	if(!bank_accounts_by_id.len)
 		return 1
+	if(HAS_TRAIT(SSeconomy, TRAIT_MARKET_CRASHING))
+		return inflation_value //early return instead of the actual check
 	inflation_value = max(round(((station_total / bank_accounts_by_id.len) / station_target), 0.1), 1.0)
 	return inflation_value
 
@@ -223,10 +218,45 @@ SUBSYSTEM_DEF(economy)
 		CRASH("Track purchases was missing an argument! (Account, Price, or Vendor.)")
 
 	audit_log += list(list(
-		"account" = account.account_holder,
+		"account" = "[account.account_holder]",
 		"cost" = price_to_use,
-		"vendor" = vendor,
+		"vendor" = "[vendor]",
 	))
+
+/**
+ * Iterates over the machines list for vending machines, resets their regular and premium product prices (Not contraband), and sends a message to the newscaster network.
+ */
+/datum/controller/subsystem/economy/proc/update_vending_prices()
+	var/list/obj/machinery/vending/prices_to_update = list()
+	// Assoc list of "z level" -> if it's on the station
+	// Hack, is station z level is too expensive to do for each machine, I hate this place
+	var/list/station_z_status = list()
+	for(var/obj/machinery/vending/vending_lad as anything in SSmachines.get_machines_by_type_and_subtypes(/obj/machinery/vending))
+		if(istype(vending_lad, /obj/machinery/vending/custom))
+			continue
+		var/vending_level = vending_lad.z
+		var/station_status = station_z_status["[vending_level]"]
+		if(station_status == null)
+			station_status = is_station_level(vending_level)
+			station_z_status["[vending_level]"] = station_status
+		if(!station_status)
+			continue
+		prices_to_update += vending_lad
+	for(var/i in 1 to length(prices_to_update))
+		var/obj/machinery/vending/vending = prices_to_update[i]
+		vending.reset_prices(vending.product_records, vending.coin_records + vending.hidden_records)
+
+/datum/controller/subsystem/economy/proc/inflict_moneybags(datum/bank_account/moneybags)
+	if(!moneybags)
+		return FALSE
+	var/mob/living/card_holder
+	for(var/obj/card in moneybags?.bank_cards)
+		if(isidcard(card))
+			card_holder = recursive_loc_check(card, /mob/living)
+	if(!isliving(card_holder)) //If on a living mob
+		return FALSE
+	card_holder.adjust_timed_status_effect(wait, /datum/status_effect/spotlight_light)
+	return TRUE
 
 #undef ECON_DEPARTMENT_STEP
 #undef ECON_ACCOUNT_STEP

@@ -20,7 +20,7 @@
 #define COMSIG_TURF_EXPOSE "turf_expose"
 ///from /turf/proc/immediate_calculate_adjacent_turfs()
 #define COMSIG_TURF_CALCULATED_ADJACENT_ATMOS "turf_calculated_adjacent_atmos"
-///called when an industrial lift enters this turf
+///called when an elevator enters this turf
 #define COMSIG_TURF_INDUSTRIAL_LIFT_ENTER "turf_industrial_life_enter"
 
 ///from /datum/element/decal/Detach(): (description, cleanable, directional, mutable_appearance/pic)
@@ -31,3 +31,26 @@
 
 ///from /datum/element/footstep/prepare_step(): (list/steps)
 #define COMSIG_TURF_PREPARE_STEP_SOUND "turf_prepare_step_sound"
+	//stops element/footstep/proc/prepare_step() from returning null if the turf itself has no sound
+	#define FOOTSTEP_OVERRIDEN (1<<0)
+///from base of datum/thrownthing/finalize(): (turf/turf, atom/movable/thrownthing) when something is thrown and lands on us
+#define COMSIG_TURF_MOVABLE_THROW_LANDED "turf_movable_throw_landed"
+
+///From element/elevation/reset_elevation(): (list/values)
+#define COMSIG_TURF_RESET_ELEVATION "turf_reset_elevation"
+	#define ELEVATION_CURRENT_PIXEL_SHIFT 1
+	#define ELEVATION_MAX_PIXEL_SHIFT 2
+
+///Called when turf no longer blocks light from passing through
+#define COMSIG_TURF_NO_LONGER_BLOCK_LIGHT "turf_no_longer_block_light"
+
+///from /turf/proc/attempt_lattice_replacement() : (list/post_successful_replacement_callbacks)
+/// `post_successful_replacement_callbacks` is a list that signal handlers can mutate to append `/datum/callback` objects.
+/// They will be called with the new catwalk if it is actually created.
+#define COMSIG_TURF_ATTEMPT_LATTICE_REPLACEMENT "turf_replaced_with_lattice"
+
+///from /turf/proc/change_area() : (area/old_area)
+#define COMSIG_TURF_AREA_CHANGED "turf_area_changed"
+
+///from /proc/create_shuttle() and /obj/docking_port/mobile/proc/add_turf() : (obj/docking_port/mobile/shuttle)
+#define COMSIG_TURF_ADDED_TO_SHUTTLE "turf_added_to_shuttle"

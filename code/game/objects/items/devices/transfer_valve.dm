@@ -1,5 +1,5 @@
 /obj/item/transfer_valve
-	icon = 'icons/obj/assemblies/assemblies.dmi'
+	icon = 'icons/obj/devices/assemblies.dmi'
 	name = "tank transfer valve"
 	icon_state = "valve_1"
 	base_icon_state = "valve"
@@ -25,24 +25,47 @@
 /obj/item/transfer_valve/Initialize(mapload)
 	. = ..()
 	RegisterSignal(src, COMSIG_ITEM_FRIED, PROC_REF(on_fried))
+	register_context()
 
 /obj/item/transfer_valve/Destroy()
 	attached_device = null
 	return ..()
 
+/obj/item/transfer_valve/add_context(atom/source, list/context, obj/item/held_item, mob/user)
+	. = ..()
+
+	if(tank_one || tank_two)
+		context[SCREENTIP_CONTEXT_ALT_LMB] = "Remove [tank_one || tank_two]"
+		. = CONTEXTUAL_SCREENTIP_SET
+	if(istype(held_item) && is_type_in_list(held_item, list(/obj/item/tank, /obj/item/assembly)))
+		context[SCREENTIP_CONTEXT_LMB] = "Attach [held_item]"
+		. = CONTEXTUAL_SCREENTIP_SET
+
+	return . || NONE
+
+/obj/item/transfer_valve/click_alt(mob/user)
+	if(tank_one)
+		split_gases()
+		valve_open = FALSE
+		tank_one.forceMove(drop_location())
+	else if(tank_two)
+		split_gases()
+		valve_open = FALSE
+		tank_two.forceMove(drop_location())
+
+	return CLICK_ACTION_SUCCESS
+
 /obj/item/transfer_valve/IsAssemblyHolder()
 	return TRUE
 
-/obj/item/transfer_valve/handle_atom_del(atom/deleted_atom)
+/obj/item/transfer_valve/Exited(atom/movable/gone, direction)
 	. = ..()
-	if(deleted_atom == tank_one)
+	if(gone == tank_one)
 		tank_one = null
 		update_appearance()
-		return
-	if(deleted_atom == tank_two)
+	else if(gone == tank_two)
 		tank_two = null
 		update_appearance()
-		return
 
 /obj/item/transfer_valve/attackby(obj/item/item, mob/user, params)
 	if(istype(item, /obj/item/tank))
@@ -152,7 +175,7 @@
 		T.Translate(-13, 0)
 		J.transform = T
 		underlays = list(J)
-	
+
 	if(wired)
 		cable_overlay = mutable_appearance(icon, icon_state = "valve_cables", layer = layer + 0.05, appearance_flags = KEEP_TOGETHER)
 		add_overlay(cable_overlay)
@@ -160,12 +183,12 @@
 	else if(cable_overlay)
 		cut_overlay(cable_overlay, TRUE)
 		cable_overlay = null
-	
+
 	worn_icon_state = "[initial(worn_icon_state)][tank_two ? "l" : ""][tank_one ? "r" : ""]"
 	if(ishuman(loc)) //worn
 		var/mob/living/carbon/human/human = loc
 		human.update_worn_back()
-	
+
 	if(!attached_device)
 		return
 
@@ -213,6 +236,7 @@
 	it explodes properly when it gets a signal (and it does).
 */
 /obj/item/transfer_valve/proc/toggle_valve(obj/item/tank/target, change_volume = TRUE)
+	playsound(src, 'sound/effects/valve_opening.ogg', 50)
 	if(!valve_open && tank_one && tank_two)
 		var/turf/bombturf = get_turf(src)
 
@@ -221,7 +245,7 @@
 		if(attached_device)
 			if(issignaler(attached_device))
 				var/obj/item/assembly/signaler/attached_signaller = attached_device
-				attachment = "<A HREF='?_src_=holder;[HrefToken()];secrets=list_signalers'>[attached_signaller]</A>"
+				attachment = "<A href='byond://?_src_=holder;[HrefToken()];secrets=list_signalers'>[attached_signaller]</A>"
 				attachment_signal_log = attached_signaller.last_receive_signal_log ? "The following log entry is the last one associated with the attached signaller<br>[attached_signaller.last_receive_signal_log]" : "There is no signal log entry."
 			else
 				attachment = attached_device
@@ -292,7 +316,7 @@
 	data["valve"] = valve_open
 	return data
 
-/obj/item/transfer_valve/ui_act(action, params)
+/obj/item/transfer_valve/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	if(.)
 		return
@@ -303,14 +327,12 @@
 				split_gases()
 				valve_open = FALSE
 				tank_one.forceMove(drop_location())
-				tank_one = null
 				. = TRUE
 		if("tanktwo")
 			if(tank_two)
 				split_gases()
 				valve_open = FALSE
 				tank_two.forceMove(drop_location())
-				tank_two = null
 				. = TRUE
 		if("toggle")
 			toggle_valve()

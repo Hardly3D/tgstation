@@ -34,6 +34,7 @@
 		/obj/item/circuitboard/machine/ore_redemption,
 		/obj/item/circuitboard/computer/order_console/mining,
 		/obj/item/circuitboard/machine/microwave,
+		/obj/item/circuitboard/machine/microwave/engineering,
 		/obj/item/circuitboard/machine/deep_fryer,
 		/obj/item/circuitboard/machine/griddle,
 		/obj/item/circuitboard/machine/reagentgrinder,
@@ -58,6 +59,7 @@
 		/obj/item/circuitboard/computer/rdconsole,
 		/obj/item/circuitboard/computer/scan_consolenew,
 		/obj/item/circuitboard/machine/dnascanner,
+		/obj/item/circuitboard/machine/dna_infuser,
 	)
 
 /obj/effect/spawner/random/techstorage/security_all
@@ -72,7 +74,7 @@
 	name = "engineering circuit board spawner"
 	loot = list(
 		/obj/item/circuitboard/computer/atmos_alert,
-		/obj/item/circuitboard/computer/stationalert,
+		/obj/item/circuitboard/computer/station_alert,
 		/obj/item/circuitboard/computer/powermonitor,
 	)
 

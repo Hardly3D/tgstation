@@ -2,7 +2,6 @@
 	required_drink_type = /datum/reagent/consumable/ethanol/bilk
 	name = "glass of bilk"
 	desc = "A brew of milk and beer. For those alcoholics who fear osteoporosis."
-	icon_state = "glass_brown"
 
 /datum/glass_style/drinking_glass/threemileisland
 	required_drink_type = /datum/reagent/consumable/ethanol/threemileisland
@@ -400,7 +399,6 @@
 	required_drink_type = /datum/reagent/consumable/ethanol/bacchus_blessing
 	name = "Bacchus' Blessing"
 	desc = "You didn't think it was possible for a liquid to be so utterly revolting. Are you sure about this...?"
-	icon_state = "glass_brown2"
 
 /datum/glass_style/drinking_glass/atomicbomb
 	required_drink_type = /datum/reagent/consumable/ethanol/atomicbomb
@@ -434,7 +432,6 @@
 	required_drink_type = /datum/reagent/consumable/ethanol/eggnog
 	name = "eggnog"
 	desc = "For enjoying the most wonderful time of the year."
-	icon_state = "glass_yellow"
 	drink_type = FRUIT
 
 /datum/glass_style/has_foodtype/juicebox/eggnog
@@ -461,25 +458,21 @@
 	required_drink_type = /datum/reagent/consumable/ethanol/triple_sec
 	name = "Triple Sec"
 	desc = "A glass of straight Triple Sec."
-	icon_state = "glass_orange"
 
 /datum/glass_style/drinking_glass/creme_de_menthe
 	required_drink_type = /datum/reagent/consumable/ethanol/creme_de_menthe
 	name = "Creme de Menthe"
 	desc = "You can almost feel the first breath of spring just looking at it."
-	icon_state = "glass_green"
 
 /datum/glass_style/drinking_glass/creme_de_cacao
 	required_drink_type = /datum/reagent/consumable/ethanol/creme_de_cacao
 	name = "Creme de Cacao"
 	desc = "A million hazing lawsuits and alcohol poisonings have started with this humble ingredient."
-	icon_state = "glass_brown"
 
 /datum/glass_style/drinking_glass/creme_de_coconut
 	required_drink_type = /datum/reagent/consumable/ethanol/creme_de_coconut
 	name = "Creme de Coconut"
 	desc = "An unintimidating glass of coconut liqueur."
-	icon_state = "glass_white"
 
 /datum/glass_style/drinking_glass/quadruple_sec
 	required_drink_type = /datum/reagent/consumable/ethanol/quadruple_sec
@@ -643,7 +636,7 @@
 /datum/glass_style/drinking_glass/applejack
 	required_drink_type = /datum/reagent/consumable/ethanol/applejack
 	name = "Applejack"
-	desc = "You feel like you could drink this all neight."
+	desc = "You feel like you could drink this all neigh-t."
 	icon_state = "applejack_glass"
 
 /datum/glass_style/drinking_glass/jack_rose
@@ -739,7 +732,7 @@
 /datum/glass_style/drinking_glass/godfather
 	required_drink_type = /datum/reagent/consumable/ethanol/godfather
 	name = "Godfather"
-	desc = "A classic from old Italy and enjoyed by gangsters, pray the orange peel doesnt end up in your mouth."
+	desc = "A classic from old Italy and enjoyed by gangsters, pray the orange peel doesn't end up in your mouth."
 	icon = 'icons/obj/drinks/mixed_drinks.dmi'
 	icon_state = "godfather"
 
@@ -787,7 +780,6 @@
 /datum/glass_style/drinking_glass/mushi_kombucha
 	required_drink_type = /datum/reagent/consumable/ethanol/mushi_kombucha
 	name = "glass of mushi kombucha"
-	icon_state = "glass_orange"
 
 /datum/glass_style/drinking_glass/triumphal_arch
 	required_drink_type = /datum/reagent/consumable/ethanol/triumphal_arch
@@ -905,6 +897,138 @@
 	icon = 'icons/obj/drinks/mixed_drinks.dmi'
 	icon_state = "pod_tesla"
 
+/datum/glass_style/drinking_glass/yuyakita
+	required_drink_type = /datum/reagent/consumable/ethanol/yuyakita
+	name = "Yūyakita"
+	desc = "And I looked, and behold a pale horse: and his name that sat on him was Death, and Hell followed with him."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "yuyakita"
+
+/datum/glass_style/drinking_glass/saibasan
+	required_drink_type = /datum/reagent/consumable/ethanol/saibasan
+	name = "Saibāsan"
+	desc = "A drink made in honour of Cybersun Industries' 600th year of continual business. Officially, you're meant to call this a \"Hong Kong Cooler\" on Nanotrasen stations, but that name sucks."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "saibasan"
+
+/datum/glass_style/drinking_glass/banzai_ti
+	required_drink_type = /datum/reagent/consumable/ethanol/banzai_ti
+	name = "Banzai-Tī"
+	desc = "A drink to last ten-thousand years- better sip slowly then."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "banzai_ti"
+
+/datum/glass_style/drinking_glass/sanraizusoda
+	required_drink_type = /datum/reagent/consumable/ethanol/sanraizusoda
+	name = "Sanraizusōda"
+	desc = "A popular children's dessert from Japan, made adult with the addition of booze. Kanpai!"
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "sanraizusoda"
+
+/datum/glass_style/drinking_glass/kumicho
+	required_drink_type = /datum/reagent/consumable/ethanol/kumicho
+	name = "Kumichō"
+	desc = "Much like the American Godfather, the Kumichō is sophisticated, strong, and almost certainly tied to illicit activities."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "kumicho"
+
+/datum/glass_style/drinking_glass/red_planet
+	required_drink_type = /datum/reagent/consumable/ethanol/red_planet
+	name = "Red Planet"
+	desc = "A patriotic drink from Mars, commonly enjoyed on September 15th: the day that peace was declared following the Martian uprising, with the Martian Concession granting Mars proper representation as part of the Terran Federation."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "red_planet"
+
+/datum/glass_style/drinking_glass/amaterasu
+	required_drink_type = /datum/reagent/consumable/ethanol/amaterasu
+	name = "Amaterasu"
+	desc = "And so Amaterasu emerged from the Heavenly Rock Cave, and light was restored to the world."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "amaterasu"
+
+/datum/glass_style/drinking_glass/nekomimosa
+	required_drink_type = /datum/reagent/consumable/ethanol/nekomimosa
+	name = "Nekomimosa"
+	desc = "A syrupy mess of a cocktail, dedicated to a felinid popstar that took Mars by storm a few years ago."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "nekomimosa"
+
+/datum/glass_style/drinking_glass/sentai_quencha
+	required_drink_type = /datum/reagent/consumable/ethanol/sentai_quencha
+	name = "Sentai Quencha"
+	desc = "Tastes like ultimate ninja power. And melon. And citrus. And some other stuff."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "sentai_quencha"
+
+/datum/glass_style/drinking_glass/bosozoku
+	required_drink_type = /datum/reagent/consumable/ethanol/bosozoku
+	name = "Bōsōzoku"
+	desc = "A refreshing summer drink enjoyed across Mars and beyond. Any resemblance to shandies or radlers is unintentional."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "bosozoku"
+
+/datum/glass_style/drinking_glass/ersatzche
+	required_drink_type = /datum/reagent/consumable/ethanol/ersatzche
+	name = "Ersatzche"
+	desc = "An interesting drink invented in the Blue Room Bar and Grill in New Osaka. It's a tasty take on Mexican tepache, made with a beer base."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "ersatzche"
+
+/datum/glass_style/drinking_glass/red_city_am
+	required_drink_type = /datum/reagent/consumable/ethanol/red_city_am
+	name = "Red City AM"
+	desc = "A popular breakfast drink from New Osaka's bars- for the enterprising day drinker."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "red_city_am"
+
+/datum/glass_style/drinking_glass/kings_ransom
+	required_drink_type = /datum/reagent/consumable/ethanol/kings_ransom
+	name = "King's Ransom"
+	desc = "A weird drink that manages to marry a number of seemingly conflicting flavours into a single harmonious taste."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "kings_ransom"
+
+/datum/glass_style/drinking_glass/four_bit
+	required_drink_type = /datum/reagent/consumable/ethanol/four_bit
+	name = "Four Bit"
+	desc = "Straight out of the pits of a Martian hacking convention."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "four_bit"
+
+/datum/glass_style/drinking_glass/white_hawaiian
+	required_drink_type = /datum/reagent/consumable/ethanol/white_hawaiian
+	name = "White Hawaiian"
+	desc = "One of the infinite variations on the White Russian, this drink gets away from the frozen north and into the heat of the ring of fire with a host of toasty coconut flavours."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "white_hawaiian"
+
+/datum/glass_style/drinking_glass/maui_sunrise
+	required_drink_type = /datum/reagent/consumable/ethanol/maui_sunrise
+	name = "Maui Sunrise"
+	desc = "Take a sip and be transported to the Aloha state. Metaphorically, of course."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "maui_sunrise"
+
+/datum/glass_style/drinking_glass/imperial_mai_tai
+	required_drink_type = /datum/reagent/consumable/ethanol/imperial_mai_tai
+	name = "Imperial Mai Tai"
+	desc = "I mean, who springs for orgeat these days anyway? Korta nut's the new big thing, baby."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "imperial_mai_tai"
+
+/datum/glass_style/drinking_glass/konococo_rumtini
+	required_drink_type = /datum/reagent/consumable/ethanol/konococo_rumtini
+	name = "Konococo Rumtini"
+	desc = "Considered an acceptable breakfast drink in Little Hawaii."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "konococo_rumtini"
+
+/datum/glass_style/drinking_glass/blue_hawaiian
+	required_drink_type = /datum/reagent/consumable/ethanol/blue_hawaiian
+	name = "Blue Hawaiian"
+	desc = "It's a tropical vacation in a glass."
+	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "blue_hawaiian"
 
 // Shot glasses
 

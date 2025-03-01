@@ -133,6 +133,39 @@
 	)
 	departmental_flags = DEPARTMENT_BITFLAG_ENGINEERING
 
+/datum/design/rcd_upgrade/anti_interrupt
+	name = "RCD anti disruption designs upgrade"
+	desc = "Prevents interruption of RCD construction and deconstruction."
+	id = "rcd_upgrade_anti_interrupt"
+	build_type = PROTOLATHE | AWAY_LATHE
+	materials = list(
+		/datum/material/iron = SHEET_MATERIAL_AMOUNT * 2.5,
+		/datum/material/glass = SHEET_MATERIAL_AMOUNT * 1.25,
+		/datum/material/silver = HALF_SHEET_MATERIAL_AMOUNT * 1.5,
+		/datum/material/titanium = SHEET_MATERIAL_AMOUNT,
+	)
+	build_path = /obj/item/rcd_upgrade/anti_interrupt
+	category = list(
+		RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_ENGINEERING_ADVANCED
+	)
+	departmental_flags = DEPARTMENT_BITFLAG_ENGINEERING
+
+/datum/design/rcd_upgrade/cooling
+	name = "RCD cooling upgrade"
+	desc = "Allows the RCD to more quickly perform multiple actions at once."
+	id = "rcd_upgrade_cooling"
+	build_type = PROTOLATHE | AWAY_LATHE
+	materials = list(
+		/datum/material/iron = SHEET_MATERIAL_AMOUNT * 2,
+		/datum/material/glass = SHEET_MATERIAL_AMOUNT,
+		/datum/material/silver = HALF_SHEET_MATERIAL_AMOUNT,
+	)
+	build_path = /obj/item/rcd_upgrade/cooling
+	category = list(
+		RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_ENGINEERING_ADVANCED
+	)
+	departmental_flags = DEPARTMENT_BITFLAG_ENGINEERING
+
 /datum/design/rcd_upgrade/furnishing
 	name = "RCD furnishing upgrade"
 	desc = "Adds the ability to furnish areas using the RCD."
@@ -192,17 +225,6 @@
 		RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_BOTANY_ADVANCED
 	)
 	departmental_flags = DEPARTMENT_BITFLAG_SERVICE
-
-/datum/design/plumbing_rcd_sci
-	name = "Research Plumbing Constructor"
-	id = "plumbing_rcd_sci"
-	build_type = PROTOLATHE | AWAY_LATHE
-	materials = list(/datum/material/iron =SHEET_MATERIAL_AMOUNT*37.5, /datum/material/glass =SHEET_MATERIAL_AMOUNT*18.75, /datum/material/plastic =HALF_SHEET_MATERIAL_AMOUNT)
-	build_path = /obj/item/construction/plumbing/research
-	category = list(
-		RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_PLUMBING
-	)
-	departmental_flags = DEPARTMENT_BITFLAG_SCIENCE
 
 /datum/design/plumbing_rcd_service
 	name = "Service Plumbing Constructor"
@@ -403,3 +425,13 @@
 		RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_ENGINEERING_ADVANCED
 	)
 	departmental_flags = DEPARTMENT_BITFLAG_ENGINEERING
+
+/datum/design/shuttle_blueprints
+	name = "Shuttle Blueprints"
+	desc = "Blueprints suitable for constructing shuttles"
+	id = "shuttle_blueprints"
+	build_type = PROTOLATHE
+	materials = list(/datum/material/plastic = HALF_SHEET_MATERIAL_AMOUNT)
+	build_path = /obj/item/shuttle_blueprints
+	category = list(RND_CATEGORY_TOOLS + RND_SUBCATEGORY_TOOLS_ENGINEERING)
+	departmental_flags = DEPARTMENT_BITFLAG_CARGO | DEPARTMENT_BITFLAG_ENGINEERING | DEPARTMENT_BITFLAG_SCIENCE

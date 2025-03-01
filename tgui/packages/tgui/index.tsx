@@ -26,14 +26,16 @@ import './styles/themes/syndicate.scss';
 import './styles/themes/wizard.scss';
 import './styles/themes/admin.scss';
 
-import { StoreProvider, configureStore } from './store';
+import { perf } from 'common/perf';
+import { setupGlobalEvents } from 'tgui-core/events';
+import { setupHotKeys } from 'tgui-core/hotkeys';
+import { setupHotReloading } from 'tgui-dev-server/link/client.cjs';
 
+import { setGlobalStore } from './backend';
+import { loadIconRefMap } from './icons';
 import { captureExternalLinks } from './links';
 import { createRenderer } from './renderer';
-import { perf } from 'common/perf';
-import { setupGlobalEvents } from './events';
-import { setupHotKeys } from './hotkeys';
-import { setupHotReloading } from 'tgui-dev-server/link/client.cjs';
+import { configureStore } from './store';
 
 perf.mark('inception', window.performance?.timing?.navigationStart);
 perf.mark('init');
@@ -41,16 +43,15 @@ perf.mark('init');
 const store = configureStore();
 
 const renderApp = createRenderer(() => {
+  setGlobalStore(store);
+  loadIconRefMap();
+
   const { getRoutedComponent } = require('./routes');
   const Component = getRoutedComponent(store);
-  return (
-    <StoreProvider store={store}>
-      <Component />
-    </StoreProvider>
-  );
+  return <Component />;
 });
 
-const setupApp = () => {
+function setupApp() {
   // Delay setup
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupApp);
@@ -70,16 +71,10 @@ const setupApp = () => {
   // Enable hot module reloading
   if (module.hot) {
     setupHotReloading();
-    // prettier-ignore
-    module.hot.accept([
-      './components',
-      './debug',
-      './layouts',
-      './routes',
-    ], () => {
+    module.hot.accept(['./debug', './layouts', './routes'], () => {
       renderApp();
     });
   }
-};
+}
 
 setupApp();

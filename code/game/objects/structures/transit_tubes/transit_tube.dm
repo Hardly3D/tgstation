@@ -20,13 +20,14 @@
 	init_tube_dirs()
 	update_appearance()
 	AddElement(/datum/element/climbable)
+	AddElement(/datum/element/elevation, pixel_shift = 12)
 
 /obj/structure/transit_tube/Destroy()
 	for(var/obj/structure/transit_tube_pod/P in loc)
 		P.deconstruct(FALSE)
 	return ..()
 
-/obj/structure/transit_tube/singularity_pull(S, current_size)
+/obj/structure/transit_tube/singularity_pull(atom/singularity, current_size)
 	..()
 	if(current_size >= STAGE_FIVE)
 		deconstruct(FALSE)
@@ -37,9 +38,9 @@
 			for(var/obj/structure/transit_tube_pod/pod in src.loc)
 				to_chat(user, span_warning("Remove the pod first!"))
 				return
-			user.visible_message(span_notice("[user] starts to detach \the [src]."), span_notice("You start to detach the [name]..."))
+			user.visible_message(span_notice("[user] starts to detach \the [src]."), span_notice("You start to detach \the [src]..."))
 			if(W.use_tool(src, user, 2 SECONDS, volume=50))
-				to_chat(user, span_notice("You detach the [name]."))
+				to_chat(user, span_notice("You detach \the [src]."))
 				var/obj/structure/c_transit_tube/R = new tube_construction(loc)
 				R.setDir(dir)
 				transfer_fingerprints_to(R)
@@ -61,7 +62,7 @@
 
 
 /obj/structure/transit_tube/proc/has_entrance(from_dir)
-	from_dir = turn(from_dir, 180)
+	from_dir = REVERSE_DIR(from_dir)
 
 	for(var/direction in tube_dirs)
 		if(direction == from_dir)

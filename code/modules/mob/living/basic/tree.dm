@@ -28,7 +28,7 @@
 	melee_damage_upper = 12
 	attack_verb_continuous = "bites"
 	attack_verb_simple = "bite"
-	attack_sound = 'sound/weapons/bite.ogg'
+	attack_sound = 'sound/items/weapons/bite.ogg'
 	attack_vis_effect = ATTACK_EFFECT_BITE
 
 	faction = list(FACTION_HOSTILE)
@@ -54,12 +54,16 @@
 
 /mob/living/basic/tree/Initialize(mapload)
 	. = ..()
+	AddComponent(/datum/component/seethrough_mob)
 	AddElement(/datum/element/swabable, CELL_LINE_TABLE_PINE, CELL_VIRUS_TABLE_GENERIC_MOB, 1, 5)
-	AddElement(/datum/element/death_drops, list(/obj/item/stack/sheet/mineral/wood))
+	var/list/death_loot = string_list(list(/obj/item/stack/sheet/mineral/wood))
+	AddElement(/datum/element/death_drops, death_loot)
 	AddComponent(/datum/component/aggro_emote, emote_list = string_list(list("growls")), emote_chance = 20)
 
 /mob/living/basic/tree/Life(seconds_per_tick = SSMOBS_DT, times_fired)
-	..()
+	. = ..()
+	if(!.) //dead or deleted
+		return
 	if(!isopenturf(loc))
 		return
 	var/turf/open/our_turf = src.loc
@@ -72,7 +76,7 @@
 		our_turf.air.gases[/datum/gas/carbon_dioxide][MOLES] -= amt
 		our_turf.atmos_spawn_air("[GAS_O2]=[amt]")
 
-/mob/living/basic/tree/melee_attack(atom/target, list/modifiers)
+/mob/living/basic/tree/melee_attack(atom/target, list/modifiers, ignore_cooldown = FALSE)
 	. = ..()
 
 	if(!.)
@@ -98,19 +102,13 @@
 
 /datum/ai_controller/basic_controller/tree
 	blackboard = list(
-		BB_TARGETTING_DATUM = new /datum/targetting_datum/basic(),
+		BB_TARGETING_STRATEGY = /datum/targeting_strategy/basic,
 	)
 
 	ai_movement = /datum/ai_movement/basic_avoidance
 	idle_behavior = /datum/idle_behavior/idle_random_walk/less_walking
 	planning_subtrees = list(
 		/datum/ai_planning_subtree/simple_find_target,
-		/datum/ai_planning_subtree/basic_melee_attack_subtree/tree,
+		/datum/ai_planning_subtree/basic_melee_attack_subtree,
 		/datum/ai_planning_subtree/random_speech/tree,
 	)
-
-/datum/ai_planning_subtree/basic_melee_attack_subtree/tree
-	melee_attack_behavior = /datum/ai_behavior/basic_melee_attack/tree
-
-/datum/ai_behavior/basic_melee_attack/tree
-	action_cooldown = 2 SECONDS

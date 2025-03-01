@@ -18,9 +18,9 @@
 	var/reading_time = 5 SECONDS
 	/// The sounds played as the user's reading the book.
 	var/list/book_sounds = list(
-		'sound/effects/pageturn1.ogg',
-		'sound/effects/pageturn2.ogg',
-		'sound/effects/pageturn3.ogg',
+		'sound/effects/page_turn/pageturn1.ogg',
+		'sound/effects/page_turn/pageturn2.ogg',
+		'sound/effects/page_turn/pageturn3.ogg',
 	)
 
 /obj/item/book/granter/attack_self(mob/living/user)
@@ -39,7 +39,8 @@
 		recoil(user)
 		return FALSE
 
-	on_reading_start(user)
+	if(!on_reading_start(user))
+		return
 	reading = TRUE
 	for(var/i in 1 to pages_to_mastery)
 		if(!turn_page(user))
@@ -56,6 +57,7 @@
 /// Called when the user starts to read the granter.
 /obj/item/book/granter/proc/on_reading_start(mob/living/user)
 	to_chat(user, span_notice("You start reading [name]..."))
+	return TRUE
 
 /// Called when the reading is interrupted without finishing.
 /obj/item/book/granter/proc/on_reading_stopped(mob/living/user)
@@ -99,6 +101,7 @@
 
 /obj/item/book/granter/action/on_reading_start(mob/living/user)
 	to_chat(user, span_notice("You start reading about [action_name]..."))
+	return TRUE
 
 /obj/item/book/granter/action/on_reading_finished(mob/living/user)
 	to_chat(user, span_notice("You feel like you've got a good handle on [action_name]!"))

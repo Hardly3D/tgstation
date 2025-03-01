@@ -8,8 +8,6 @@
 	anchored = FALSE
 	density = TRUE
 	use_power = NO_POWER_USE
-	///category for plumbing RCD
-	category="Synthesizers"
 
 	///units we pump per second
 	var/pump_power = 1
@@ -42,8 +40,8 @@
 			update_appearance()
 		if(!geyser) //we didnt find one, abort
 			geyserless = TRUE
-			visible_message(span_warning("The [name] makes a sad beep!"))
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 50)
+			visible_message(span_warning("\The [src] makes a sad beep!"))
+			playsound(src, 'sound/machines/buzz/buzz-sigh.ogg', 50)
 			return
 
 	pump(seconds_per_tick)

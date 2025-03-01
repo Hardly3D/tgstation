@@ -2,7 +2,7 @@
 	name = "flora"
 	desc = "Some sort of plant."
 	resistance_flags = FLAMMABLE
-	max_integrity = 150
+	max_integrity = 100
 	anchored = TRUE
 	drag_slowdown = 1.3
 
@@ -112,6 +112,12 @@
 
 	if(harvest(user))
 		after_harvest(user)
+
+/obj/structure/flora/run_atom_armor(damage_amount, damage_type, damage_flag = 0, attack_dir)
+	if(damage_flag == MELEE)
+		if(damage_type == BURN)
+			damage_amount *= 4
+	return ..()
 
 /obj/structure/flora/play_attack_sound(damage_amount, damage_type = BRUTE, damage_flag = 0)
 	var/use_default_sound = TRUE //Because I don't wanna do unnecessary bitflag checks in a single if statement, while also allowing for multiple sounds to be played
@@ -263,13 +269,11 @@
 	var/matrix/M = matrix(transform)
 	transform = M.Turn(-previous_rotation)
 
-/obj/structure/flora/deconstruct()
-	if(!(flags_1 & NODECONSTRUCT_1))
-		if(harvested)
-			return ..()
+/obj/structure/flora/atom_deconstruct(disassembled = TRUE)
+	if(harvested)
+		return ..()
 
-		harvest(product_amount_multiplier = 0.6)
-	. = ..()
+	harvest(product_amount_multiplier = 0.6)
 
 /*********
  * Trees *
@@ -280,6 +284,7 @@
 	name = "tree"
 	desc = "A large tree."
 	density = TRUE
+	max_integrity = 150
 	pixel_x = -16
 	layer = FLY_LAYER
 	plane = ABOVE_GAME_PLANE
@@ -357,6 +362,7 @@
 /obj/structure/flora/tree/dead/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "tree_[rand(1, 6)]"
+	update_appearance()
 
 /obj/structure/flora/tree/jungle
 	desc = "It's seriously hampering your view of the jungle."
@@ -386,6 +392,7 @@
 /obj/structure/flora/tree/jungle/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "tree[rand(1, 6)]"
+	update_appearance()
 
 /obj/structure/flora/tree/jungle/small
 	pixel_y = 0
@@ -414,6 +421,7 @@
 /obj/structure/flora/tree/jungle/small/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "tree[rand(1, 6)]"
+	update_appearance()
 
 /**************
  * Pine Trees *
@@ -437,17 +445,22 @@
 /obj/structure/flora/tree/pine/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "pine_[rand(1,3)]"
+	update_appearance()
 
 /obj/structure/flora/tree/pine/xmas
 	name = "xmas tree"
 	desc = "A wondrous decorated Christmas tree."
 	icon_state = "pine_c"
-	flags_1 = NODECONSTRUCT_1 //protected by the christmas spirit
+
+/obj/structure/flora/tree/pine/xmas/presentless
+	icon_state = "pinepresents"
+	desc = "A wondrous decorated Christmas tree. It has presents, though none of them seem to have your name on them."
 
 /obj/structure/flora/tree/pine/xmas/presents
 	icon_state = "pinepresents"
 	desc = "A wondrous decorated Christmas tree. It has presents!"
-	var/gift_type = /obj/item/a_gift/anything
+	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF //protected by the christmas spirit
+	var/gift_type = /obj/item/gift/anything
 	var/unlimited = FALSE
 	var/static/list/took_presents //shared between all xmas trees
 
@@ -497,13 +510,13 @@
 /obj/structure/flora/coconuts
 	gender = PLURAL
 	name = "coconuts"
-	icon = 'icons/misc/beach.dmi'
+	icon = 'icons/obj/fluff/beach.dmi'
 	icon_state = "coconuts"
 
 /obj/structure/flora/tree/palm
 	name = "palm tree"
 	desc = "A tree straight from the tropics."
-	icon = 'icons/misc/beach2.dmi'
+	icon = 'icons/obj/fluff/beach2.dmi'
 	icon_state = "palm1"
 	pixel_x = 0
 
@@ -513,6 +526,7 @@
 /obj/structure/flora/tree/palm/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "palm[rand(1,2)]"
+	update_appearance()
 
 /*********
  * Grass *
@@ -544,6 +558,7 @@
 /obj/structure/flora/grass/brown/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "snowgrass[rand(1, 3)]bb"
+	update_appearance()
 
 /obj/structure/flora/grass/green
 	icon_state = "snowgrass1gb"
@@ -557,6 +572,7 @@
 /obj/structure/flora/grass/green/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "snowgrass[rand(1, 3)]gb"
+	update_appearance()
 
 /obj/structure/flora/grass/both
 	icon_state = "snowgrassall1"
@@ -570,6 +586,7 @@
 /obj/structure/flora/grass/both/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "snowgrassall[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/grass/jungle
 	name = "jungle grass"
@@ -592,6 +609,7 @@
 /obj/structure/flora/grass/jungle/a/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "grassa[rand(1, 5)]"
+	update_appearance()
 
 /obj/structure/flora/grass/jungle/b
 	icon_state = "grassb1"
@@ -611,6 +629,7 @@
 /obj/structure/flora/grass/jungle/b/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "grassb[rand(1, 5)]"
+	update_appearance()
 
 /**********
  * Bushes *
@@ -635,6 +654,7 @@
 /obj/structure/flora/bush/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "firstbush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/reed
 	icon_state = "reedbush_1"
@@ -651,6 +671,7 @@
 /obj/structure/flora/bush/reed/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "reedbush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/leafy
 	icon_state = "leafybush_1"
@@ -664,6 +685,7 @@
 /obj/structure/flora/bush/leavy/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "leafybush_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/pale
 	icon_state = "palebush_1"
@@ -680,6 +702,7 @@
 /obj/structure/flora/bush/pale/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "palebush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/stalky
 	icon_state = "stalkybush_1"
@@ -693,6 +716,7 @@
 /obj/structure/flora/bush/stalky/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "stalkybush_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/grassy
 	icon_state = "grassybush_1"
@@ -709,6 +733,7 @@
 /obj/structure/flora/bush/grassy/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "grassybush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/sparsegrass
 	icon_state = "sparsegrass_1"
@@ -722,6 +747,7 @@
 /obj/structure/flora/bush/sparsegrass/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "sparsegrass_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/fullgrass
 	icon_state = "fullgrass_1"
@@ -735,6 +761,7 @@
 /obj/structure/flora/bush/fullgrass/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "fullgrass_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/ferny
 	icon_state = "fernybush_1"
@@ -748,6 +775,7 @@
 /obj/structure/flora/bush/ferny/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "fernybush_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/sunny
 	icon_state = "sunnybush_1"
@@ -761,6 +789,7 @@
 /obj/structure/flora/bush/sunny/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "sunnybush_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/generic
 	icon_state = "genericbush_1"
@@ -777,6 +806,7 @@
 /obj/structure/flora/bush/generic/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "genericbush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/pointy
 	icon_state = "pointybush_1"
@@ -793,6 +823,7 @@
 /obj/structure/flora/bush/pointy/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "pointybush_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/lavendergrass
 	icon_state = "lavendergrass_1"
@@ -809,6 +840,7 @@
 /obj/structure/flora/bush/lavendergrass/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "lavendergrass_[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/bush/flowers_yw
 	icon_state = "ywflowers_1"
@@ -822,6 +854,7 @@
 /obj/structure/flora/bush/flowers_yw/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "ywflowers_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/flowers_br
 	icon_state = "brflowers_1"
@@ -835,6 +868,7 @@
 /obj/structure/flora/bush/flowers_br/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "brflowers_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/flowers_pp
 	icon_state = "ppflowers_1"
@@ -848,6 +882,7 @@
 /obj/structure/flora/bush/flowers_pp/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "ppflowers_[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/snow
 	icon = 'icons/obj/fluff/flora/snowflora.dmi'
@@ -871,6 +906,7 @@
 /obj/structure/flora/bush/snow/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "snowbush[rand(1, 6)]"
+	update_appearance()
 
 /obj/structure/flora/bush/jungle
 	desc = "A wild plant that is found in jungles."
@@ -887,6 +923,7 @@
 /obj/structure/flora/bush/jungle/a/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "busha[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/jungle/b
 	icon_state = "bushb1"
@@ -900,6 +937,7 @@
 /obj/structure/flora/bush/jungle/b/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "bushb[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/jungle/c
 	icon_state = "bushc1"
@@ -913,6 +951,7 @@
 /obj/structure/flora/bush/jungle/c/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "bushc[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/bush/large
 	icon = 'icons/obj/fluff/flora/largejungleflora.dmi'
@@ -931,6 +970,7 @@
 /obj/structure/flora/bush/large/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "bush[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/lunar_plant
 	name = "lunar plant"
@@ -987,6 +1027,7 @@
 /obj/structure/flora/rock/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "basalt[rand(1, 4)]"
+	update_appearance()
 
 /obj/structure/flora/rock/pile
 	name = "rock pile"
@@ -1006,6 +1047,7 @@
 /obj/structure/flora/rock/pile/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "lavarocks[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/rock/pile/jungle
 	icon_state = "rock1"
@@ -1026,6 +1068,7 @@
 /obj/structure/flora/rock/pile/jungle/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "rock[rand(1, 5)]"
+	update_appearance()
 
 /obj/structure/flora/rock/pile/jungle/large
 	name = "pile of large rocks"
@@ -1045,6 +1088,7 @@
 /obj/structure/flora/rock/pile/jungle/large/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "rocks[rand(1, 3)]"
+	update_appearance()
 
 //TODO: Make new sprites for these. the pallete in the icons are grey, and a white color here still makes them grey
 /obj/structure/flora/rock/icy
@@ -1061,6 +1105,7 @@
 /obj/structure/flora/rock/icy/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "basalt[rand(1, 3)]"
+	update_appearance()
 
 /obj/structure/flora/rock/pile/icy
 	name = "icy rocks"
@@ -1076,4 +1121,4 @@
 /obj/structure/flora/rock/pile/icy/style_random/Initialize(mapload)
 	. = ..()
 	icon_state = "lavarocks[rand(1, 3)]"
-
+	update_appearance()

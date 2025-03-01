@@ -37,6 +37,20 @@
 	var/fill_icon_state = null
 	/// The icon file to take fill icon appearances from
 	var/fill_icon = 'icons/obj/medical/reagent_fillings.dmi'
+	///The sound this container makes when picked up, dropped if there is liquid inside.
+	var/reagent_container_liquid_sound = null
+
+/obj/item/reagent_containers/apply_fantasy_bonuses(bonus)
+	. = ..()
+	if(reagents)
+		reagents.maximum_volume = modify_fantasy_variable("maximum_volume", reagents.maximum_volume, bonus * 10, minimum = 5)
+	volume = modify_fantasy_variable("maximum_volume_beaker", volume, bonus * 10, minimum = 5)
+
+/obj/item/reagent_containers/remove_fantasy_bonuses(bonus)
+	if(reagents)
+		reagents.maximum_volume = reset_fantasy_variable("maximum_volume", reagents.maximum_volume)
+	volume = reset_fantasy_variable("maximum_volume_beaker", volume)
+	return ..()
 
 /obj/item/reagent_containers/Initialize(mapload, vol)
 	. = ..()
@@ -49,28 +63,25 @@
 		reagents.add_reagent(/datum/reagent/blood, disease_amount, data)
 	add_initial_reagents()
 
-/obj/item/reagent_containers/examine()
+/obj/item/reagent_containers/examine(mob/user)
 	. = ..()
 	if(has_variable_transfer_amount)
 		if(possible_transfer_amounts.len > 1)
 			. += span_notice("Left-click or right-click in-hand to increase or decrease its transfer amount.")
 		else if(possible_transfer_amounts.len)
 			. += span_notice("Left-click or right-click in-hand to view its transfer amount.")
+	if(isliving(user) && HAS_TRAIT(user, TRAIT_REMOTE_TASTING))
+		var/mob/living/living_user = user
+		living_user.taste_container(reagents)
 
 /obj/item/reagent_containers/create_reagents(max_vol, flags)
 	. = ..()
-	RegisterSignals(reagents, list(COMSIG_REAGENTS_NEW_REAGENT, COMSIG_REAGENTS_ADD_REAGENT, COMSIG_REAGENTS_DEL_REAGENT, COMSIG_REAGENTS_REM_REAGENT), PROC_REF(on_reagent_change))
-	RegisterSignal(reagents, COMSIG_QDELETING, PROC_REF(on_reagents_del))
+	RegisterSignal(reagents, COMSIG_REAGENTS_HOLDER_UPDATED, PROC_REF(on_reagent_change))
 
 /obj/item/reagent_containers/attack(mob/living/target_mob, mob/living/user, params)
 	if (!user.combat_mode)
 		return
 	return ..()
-
-/obj/item/reagent_containers/proc/on_reagents_del(datum/reagents/reagents)
-	SIGNAL_HANDLER
-	UnregisterSignal(reagents, list(COMSIG_REAGENTS_NEW_REAGENT, COMSIG_REAGENTS_ADD_REAGENT, COMSIG_REAGENTS_DEL_REAGENT, COMSIG_REAGENTS_REM_REAGENT, COMSIG_QDELETING))
-	return NONE
 
 /obj/item/reagent_containers/proc/add_initial_reagents()
 	if(list_reagents)
@@ -129,11 +140,11 @@
 		span_danger("You splash the contents of [src] onto [target][punctuation]"),
 		ignored_mobs = target,
 	)
-
+	SEND_SIGNAL(target, COMSIG_ATOM_SPLASHED)
 	if (ismob(target))
 		var/mob/target_mob = target
 		target_mob.show_message(
-			span_userdanger("[user] splash the contents of [src] onto you!"),
+			span_userdanger("[user] splashes the contents of [src] onto you!"),
 			MSG_VISUAL,
 			span_userdanger("You feel drenched!"),
 		)
@@ -180,9 +191,9 @@
  */
 /obj/item/reagent_containers/on_accidental_consumption(mob/living/carbon/M, mob/living/carbon/user, obj/item/source_item,  discover_after = TRUE)
 	M.losebreath += 2
-	reagents?.trans_to(M, min(15, reagents.total_volume / rand(5,10)), transfered_by = user, methods = INGEST)
+	reagents?.trans_to(M, min(15, reagents.total_volume / rand(5,10)), transferred_by = user, methods = INGEST)
 	if(source_item?.reagents)
-		reagents.trans_to(source_item, min(source_item.reagents.total_volume / 2, reagents.total_volume / 5), transfered_by = user, methods = TOUCH)
+		reagents.trans_to(source_item, min(source_item.reagents.total_volume / 2, reagents.total_volume / 5), transferred_by = user, methods = TOUCH)
 
 	return ..()
 
@@ -224,7 +235,7 @@
 		reagents.expose(target_turf, TOUCH, (1 - splash_multiplier)) // 1 - splash_multiplier because it's what didn't hit the target
 
 	else if(bartender_check(target) && thrown)
-		visible_message(span_notice("[src] lands onto the [target.name] without spilling a single drop."))
+		visible_message(span_notice("[src] lands onto \the [target] without spilling a single drop."))
 		return
 
 	else
@@ -251,14 +262,10 @@
 	reagents.expose_temperature(1000)
 	return ..() | COMPONENT_MICROWAVE_SUCCESS
 
-/obj/item/reagent_containers/fire_act(temperature, volume)
-	reagents.expose_temperature(temperature)
-
 /// Updates the icon of the container when the reagents change. Eats signal args
 /obj/item/reagent_containers/proc/on_reagent_change(datum/reagents/holder, ...)
 	SIGNAL_HANDLER
 	update_appearance()
-	return NONE
 
 /obj/item/reagent_containers/update_overlays()
 	. = ..()
@@ -279,3 +286,13 @@
 
 	filling.color = mix_color_from_reagents(reagents.reagent_list)
 	. += filling
+
+/obj/item/reagent_containers/dropped(mob/user, silent)
+	. = ..()
+	if(reagent_container_liquid_sound && reagents.total_volume > 0)
+		playsound(src, reagent_container_liquid_sound, LIQUID_SLOSHING_SOUND_VOLUME, vary = TRUE, ignore_walls = FALSE)
+
+/obj/item/reagent_containers/equipped(mob/user, slot, initial = FALSE)
+	. = ..()
+	if(!initial && (slot & ITEM_SLOT_HANDS) && reagent_container_liquid_sound && reagents.total_volume > 0)
+		playsound(src, reagent_container_liquid_sound, LIQUID_SLOSHING_SOUND_VOLUME, vary = TRUE, ignore_walls = FALSE)

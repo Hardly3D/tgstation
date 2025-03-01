@@ -28,6 +28,9 @@
 	RegisterSignal(target, COMSIG_MOVABLE_Z_CHANGED, PROC_REF(handle_z_level_change), override = TRUE)
 	RegisterSignal(target, COMSIG_MOB_LOGOUT, PROC_REF(handle_logout), override = TRUE)
 
+	var/mob/target_mob = target
+	handle_z_level_change(target_mob, null, target_mob.loc)
+
 /datum/element/weather_listener/Detach(datum/source)
 	. = ..()
 	UnregisterSignal(source, list(COMSIG_MOVABLE_Z_CHANGED, COMSIG_MOB_LOGOUT))
@@ -35,7 +38,7 @@
 /datum/element/weather_listener/proc/handle_z_level_change(datum/source, turf/old_loc, turf/new_loc)
 	SIGNAL_HANDLER
 	var/list/fitting_z_levels = SSmapping.levels_by_trait(weather_trait)
-	if(!(new_loc.z in fitting_z_levels))
+	if(!(new_loc?.z in fitting_z_levels))
 		return
 	var/datum/component/our_comp = source.AddComponent(\
 		/datum/component/area_sound_manager, \

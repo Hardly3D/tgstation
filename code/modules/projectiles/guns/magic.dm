@@ -6,8 +6,8 @@
 	inhand_icon_state = "staff"
 	lefthand_file = 'icons/mob/inhands/weapons/staves_lefthand.dmi' //not really a gun and some toys use these inhands
 	righthand_file = 'icons/mob/inhands/weapons/staves_righthand.dmi'
-	fire_sound = 'sound/weapons/emitter.ogg'
-	flags_1 = CONDUCT_1
+	fire_sound = 'sound/items/weapons/emitter.ogg'
+	obj_flags = CONDUCTS_ELECTRICITY
 	w_class = WEIGHT_CLASS_HUGE
 	///what kind of magic is this
 	var/school = SCHOOL_EVOCATION
@@ -29,6 +29,17 @@
 	. = ..()
 	RegisterSignal(src, COMSIG_ITEM_MAGICALLY_CHARGED, PROC_REF(on_magic_charge))
 
+/obj/item/gun/magic/apply_fantasy_bonuses(bonus)
+	. = ..()
+	recharge_rate = modify_fantasy_variable("recharge_rate", recharge_rate, -bonus, minimum = 1)
+	max_charges = modify_fantasy_variable("max_charges", max_charges, bonus)
+	charges = modify_fantasy_variable("charges", charges, bonus)
+
+/obj/item/gun/magic/remove_fantasy_bonuses(bonus)
+	recharge_rate = reset_fantasy_variable("recharge_rate", recharge_rate)
+	max_charges = reset_fantasy_variable("max_charges", max_charges)
+	charges = reset_fantasy_variable("charges", charges)
+	return ..()
 
 /obj/item/gun/magic/fire_sounds()
 	var/frequency_to_use = sin((90/max_charges) * charges)
@@ -118,7 +129,7 @@
 
 
 /obj/item/gun/magic/shoot_with_empty_chamber(mob/living/user as mob|obj)
-	to_chat(user, span_warning("The [name] whizzles quietly."))
+	to_chat(user, span_warning("\The [src] whizzles quietly."))
 
 /obj/item/gun/magic/suicide_act(mob/living/user)
 	user.visible_message(span_suicide("[user] is twisting [src] above [user.p_their()] head, releasing a magical blast! It looks like [user.p_theyre()] trying to commit suicide!"))

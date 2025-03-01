@@ -195,7 +195,7 @@
 /area/shuttle/escape)
 "aN" = (
 /obj/effect/decal/cleanable/blood/old,
-/mob/living/simple_animal/hostile/bear/fightpit,
+/mob/living/basic/bear/fightpit,
 /turf/open/floor/engine,
 /area/shuttle/escape)
 "aO" = (
@@ -232,7 +232,7 @@
 /area/shuttle/escape)
 "aV" = (
 /obj/item/kitchen/fork,
-/mob/living/simple_animal/hostile/bear/fightpit,
+/mob/living/basic/bear/fightpit,
 /turf/open/floor/engine,
 /area/shuttle/escape)
 "aW" = (
@@ -250,7 +250,7 @@
 /area/shuttle/escape)
 "aZ" = (
 /obj/effect/decal/cleanable/shreds,
-/obj/machinery/door/window{
+/obj/machinery/door/window/left/directional/south{
 	name = "Fight Pit"
 	},
 /turf/open/floor/engine,
@@ -438,7 +438,7 @@
 "iJ" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/table,
-/obj/item/storage/backpack/duffelbag/med/surgery,
+/obj/effect/spawner/surgery_tray/full,
 /obj/item/clothing/gloves/fingerless,
 /turf/open/floor/iron,
 /area/shuttle/escape)
@@ -490,7 +490,7 @@
 /area/shuttle/escape)
 "wo" = (
 /obj/effect/decal/cleanable/blood/old,
-/mob/living/simple_animal/hostile/bear/fightpit,
+/mob/living/basic/bear/fightpit,
 /obj/machinery/light/small/red/dim/directional/east,
 /turf/open/floor/engine,
 /area/shuttle/escape)

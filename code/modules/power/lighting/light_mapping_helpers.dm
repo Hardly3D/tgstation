@@ -16,6 +16,10 @@
 /obj/machinery/light/warm/no_nightlight
 	nightshift_allowed = FALSE
 
+/obj/machinery/light/warm/dim
+	nightshift_allowed = FALSE
+	bulb_power = 0.6
+
 /obj/machinery/light/cold
 	bulb_colour = LIGHT_COLOR_FAINT_BLUE
 	nightshift_light_color = LIGHT_COLOR_FAINT_BLUE
@@ -23,15 +27,19 @@
 /obj/machinery/light/cold/no_nightlight
 	nightshift_allowed = FALSE
 
+/obj/machinery/light/cold/dim
+	nightshift_allowed = FALSE
+	bulb_power = 0.6
+
 /obj/machinery/light/red
-	bulb_colour = "#FF3232"
+	bulb_colour = COLOR_VIVID_RED
 	nightshift_allowed = FALSE
 	no_low_power = TRUE
 
 /obj/machinery/light/red/dim
 	brightness = 4
 	bulb_power = 0.7
-	fire_brightness = 2
+	fire_brightness = 4.5
 
 /obj/machinery/light/blacklight
 	bulb_colour = "#A700FF"
@@ -50,8 +58,8 @@
 	fitting = "bulb"
 	brightness = 4
 	nightshift_brightness = 4
-	fire_brightness = 3
-	bulb_colour = "#FFD6AA"
+	fire_brightness = 4.5
+	bulb_colour = LIGHT_COLOR_TUNGSTEN
 	fire_colour = "#bd3f46"
 	desc = "A small lighting fixture."
 	light_type = /obj/item/light/bulb
@@ -69,7 +77,7 @@
 	brightness = 2.4
 
 /obj/machinery/light/small/red
-	bulb_colour = "#FF3232"
+	bulb_colour = COLOR_VIVID_RED
 	no_low_power = TRUE
 	nightshift_allowed = FALSE
 	fire_colour = "#ff1100"
@@ -77,13 +85,13 @@
 /obj/machinery/light/small/red/dim
 	brightness = 2
 	bulb_power = 0.8
-	fire_brightness = 2
+	fire_brightness = 2.5
 
 /obj/machinery/light/small/blacklight
 	bulb_colour = "#A700FF"
 	nightshift_allowed = FALSE
 	brightness = 4
-	fire_brightness = 3
+	fire_brightness = 4.5
 	fire_colour = "#d400ff"
 
 // -------- Directional presets
@@ -108,11 +116,17 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/warm, 0)
 // ---- No nightlight warm light tubes
 MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/warm/no_nightlight, 0)
 
+// ---- Dim warm light tubes
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/warm/dim, 0)
+
 // ---- Cold light tubes
 MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/cold, 0)
 
 // ---- No nightlight cold light tubes
 MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/cold/no_nightlight, 0)
+
+// ---- Dim cold light tubes
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/cold/dim, 0)
 
 // ---- Red tubes
 MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light/red, 0)

@@ -28,8 +28,8 @@
 	///Which slots to apply TRAIT_NODROP to the items in
 	var/list/nodrop_slots = list(ITEM_SLOT_OCLOTHING, ITEM_SLOT_GLOVES, ITEM_SLOT_FEET, ITEM_SLOT_ICLOTHING, ITEM_SLOT_EARS)
 
-/datum/outfit/ctf/post_equip(mob/living/carbon/human/human_to_equip, visualsOnly=FALSE)
-	if(visualsOnly)
+/datum/outfit/ctf/post_equip(mob/living/carbon/human/human_to_equip, visuals_only=FALSE)
+	if(visuals_only)
 		return
 	var/list/no_drops = list()
 
@@ -55,7 +55,7 @@
 		var/obj/item/radio/headset = human_to_equip.ears
 		headset.set_frequency(team_radio_freq)
 		headset.freqlock = RADIO_FREQENCY_LOCKED
-		headset.independent = TRUE
+		headset.special_channels |= RADIO_SPECIAL_CENTCOM
 	human_to_equip.dna.species.stunmod = 0
 
 /datum/outfit/ctf/instagib
@@ -74,7 +74,7 @@
 	r_pocket = /obj/item/ammo_box/magazine/recharge/ctf/shotgun
 	belt = null
 	icon_state = "ctf_assaulter"
-	class_description = "Close combat class. Armed with a shotgun and rocket gloves."
+	class_description = "Close combat class. Armed with a shotgun and rocket gloves. Has significantly lower shield values due to higher moving speed."
 
 /datum/outfit/ctf/marksman
 	name = "CTF Marksman (Solo)"
@@ -83,7 +83,7 @@
 	r_pocket = /obj/item/ammo_box/magazine/recharge/ctf/marksman
 	belt = null
 	icon_state = "ctf_marksman"
-	class_description = "Long range class. Armed with a hitscan laser rifle."
+	class_description = "Long range class. Armed with a hitscan laser rifle with a scope."
 
 // RED TEAM CLASSES
 

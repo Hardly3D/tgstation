@@ -7,7 +7,7 @@
 	initialize_dirs = DISP_DIR_RIGHT | DISP_DIR_FLIP
 
 /obj/structure/disposalpipe/sorting/nextdir(obj/structure/disposalholder/H)
-	var/sortdir = dpdir & ~(dir | turn(dir, 180))
+	var/sortdir = dpdir & ~(dir | REVERSE_DIR(dir))
 	if(H.dir != sortdir) // probably came from the negdir
 		if(check_sorting(H)) // if destination matches filtered type...
 			return sortdir // exit through sortdirection
@@ -66,7 +66,7 @@
 			else
 				sortTypes |= O.currTag
 				to_chat(user, span_notice("Added \"[GLOB.TAGGERLOCATIONS[O.currTag]]\" filter."))
-			playsound(src, 'sound/machines/twobeep_high.ogg', 100, TRUE)
+			playsound(src, 'sound/machines/beep/twobeep_high.ogg', 100, TRUE)
 	else
 		return ..()
 

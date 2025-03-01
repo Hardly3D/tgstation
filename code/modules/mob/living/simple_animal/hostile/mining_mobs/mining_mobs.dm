@@ -1,7 +1,7 @@
 //the base mining mob
 /mob/living/simple_animal/hostile/asteroid
 	vision_range = 2
-	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_plas" = 0, "max_plas" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
+	atmos_requirements = null
 	faction = list(FACTION_MINING)
 	weather_immunities = list(TRAIT_LAVA_IMMUNE,TRAIT_ASHSTORM_IMMUNE)
 	obj_damage = 30
@@ -33,11 +33,14 @@
 	if(crusher_loot)
 		AddElement(/datum/element/crusher_loot, crusher_loot, crusher_drop_mod, del_on_death)
 	AddElement(/datum/element/mob_killed_tally, "mobs_killed_mining")
+	var/static/list/vulnerable_projectiles
+	if(!vulnerable_projectiles)
+		vulnerable_projectiles = string_list(MINING_MOB_PROJECTILE_VULNERABILITY)
 	AddElement(\
 		/datum/element/ranged_armour,\
 		minimum_projectile_force = 30,\
 		below_projectile_multiplier = 0.3,\
-		vulnerable_projectile_types = MINING_MOB_PROJECTILE_VULNERABILITY,\
+		vulnerable_projectile_types = vulnerable_projectiles,\
 		minimum_thrown_force = 20,\
 		throw_blocked_message = throw_message,\
 	)

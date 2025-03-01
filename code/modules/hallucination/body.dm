@@ -10,7 +10,7 @@
 	/// Whether we apply the floating anim to the body
 	var/body_floats = FALSE
 	/// The layer this body will be drawn on, in case we want to bypass lighting
-	var/body_layer = TURF_LAYER
+	var/body_layer = LOW_FLOOR_LAYER
 	/// if TRUE, spawns the body under the hallucinator instead of somewhere in view
 	var/spawn_under_hallucinator = FALSE
 
@@ -58,7 +58,7 @@
 
 /datum/hallucination/body/husk
 	random_hallucination_weight = 8
-	body_image_file = 'icons/mob/species/human/human.dmi'
+	body_image_file = 'icons/mob/human/human.dmi'
 	body_image_state = "husk"
 
 /datum/hallucination/body/husk/sideways
@@ -151,11 +151,11 @@
 	body_floats = TRUE
 
 /datum/hallucination/body/weird/faceless
-	body_image_file = 'icons/mob/simple/traders.dmi'
+	body_image_file = 'icons/obj/trader_signs.dmi'
 	body_image_state = "faceless"
 
 /datum/hallucination/body/weird/bones
-	body_image_file = 'icons/mob/simple/traders.dmi'
+	body_image_file = 'icons/obj/trader_signs.dmi'
 	body_image_state = "mrbones"
 
 /datum/hallucination/body/weird/freezer

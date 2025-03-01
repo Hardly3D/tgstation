@@ -21,6 +21,10 @@
 	/// If the can hasn't been opened yet, this is the measure of how fizzed up it is from being shaken or thrown around. When opened, this is rolled as a percentage chance to burst
 	var/fizziness = 0
 
+/obj/item/reagent_containers/cup/soda_cans/Initialize(mapload, vol)
+	. = ..()
+	AddElement(/datum/element/slapcrafting, string_list(list(/datum/crafting_recipe/improv_explosive)))
+
 /obj/item/reagent_containers/cup/soda_cans/random/Initialize(mapload)
 	..()
 	var/T = pick(subtypesof(/obj/item/reagent_containers/cup/soda_cans) - /obj/item/reagent_containers/cup/soda_cans/random)
@@ -36,7 +40,7 @@
 		sleep(1 SECONDS)
 	H.visible_message(span_suicide("[H] takes a big sip from [src]! It looks like [H.p_theyre()] trying to commit suicide!"))
 	playsound(H,'sound/items/drink.ogg', 80, TRUE)
-	reagents.trans_to(H, src.reagents.total_volume, transfered_by = H) //a big sip
+	reagents.trans_to(H, src.reagents.total_volume, transferred_by = H) //a big sip
 	sleep(0.5 SECONDS)
 	H.say(pick(
 		"Now, Outbomb Cuban Pete, THAT was a game.",
@@ -65,24 +69,24 @@
 			user.visible_message(span_warning("[user] crushes the can of [src] on [user.p_their()] forehead!"), span_notice("You crush the can of [src] on your forehead."))
 		else
 			user.visible_message(span_warning("[user] crushes the can of [src] on [M]'s forehead!"), span_notice("You crush the can of [src] on [M]'s forehead."))
-		playsound(M,'sound/weapons/pierce.ogg', rand(10,50), TRUE)
+		playsound(M,'sound/items/weapons/pierce.ogg', rand(10,50), TRUE)
 		var/obj/item/trash/can/crushed_can = new /obj/item/trash/can(M.loc)
 		crushed_can.icon_state = icon_state
 		qdel(src)
 		return TRUE
 	return ..()
 
-/obj/item/reagent_containers/cup/soda_cans/bullet_act(obj/projectile/P)
+/obj/item/reagent_containers/cup/soda_cans/bullet_act(obj/projectile/proj)
 	. = ..()
 	if(QDELETED(src))
 		return
-	if(P.damage > 0 && P.damage_type == BRUTE)
-		var/obj/item/trash/can/crushed_can = new /obj/item/trash/can(src.loc)
-		crushed_can.icon_state = icon_state
-		var/atom/throw_target = get_edge_target_turf(crushed_can, pick(GLOB.alldirs))
-		crushed_can.throw_at(throw_target, rand(1,2), 7)
-		qdel(src)
+	if(!proj.damage || proj.damage_type != BRUTE)
 		return
+	var/obj/item/trash/can/crushed_can = new /obj/item/trash/can(loc)
+	crushed_can.icon_state = icon_state
+	var/atom/throw_target = get_edge_target_turf(crushed_can, pick(GLOB.alldirs))
+	crushed_can.throw_at(throw_target, rand(1,2), 7)
+	qdel(src)
 
 /obj/item/reagent_containers/cup/soda_cans/proc/open_soda(mob/user)
 	if(prob(fizziness))
@@ -114,7 +118,7 @@
 			if(iter_mob != target)
 				iter_mob.add_mood_event("observed_soda_spill", /datum/mood_event/observed_soda_spill, target, src)
 
-	playsound(src, 'sound/effects/can_pop.ogg', 80, TRUE)
+	playsound(src, 'sound/items/can/can_pop.ogg', 80, TRUE)
 	if(!hide_message)
 		visible_message(span_danger("[src] spills over, fizzing its contents all over [target]!"))
 	spillable = TRUE
@@ -134,7 +138,7 @@
 
 	burst_soda(hit_atom, hide_message = TRUE)
 	visible_message(span_danger("[src]'s impact with [hit_atom] causes it to rupture, spilling everywhere!"))
-	var/obj/item/trash/can/crushed_can = new /obj/item/trash/can(src.loc)
+	var/obj/item/trash/can/crushed_can = new /obj/item/trash/can(loc)
 	crushed_can.icon_state = icon_state
 	moveToNullspace()
 	QDEL_IN(src, 1 SECONDS) // give it a second so it can still be logged for the throw impact
@@ -147,7 +151,7 @@
 
 /obj/item/reagent_containers/cup/soda_cans/attack_self_secondary(mob/user)
 	if(!is_drainable())
-		playsound(src, 'sound/effects/can_shake.ogg', 50, TRUE)
+		playsound(src, 'sound/items/can/can_shake.ogg', 50, TRUE)
 		user.visible_message(span_danger("[user] shakes [src]!"), span_danger("You shake up [src]!"), vision_distance=2)
 		fizziness += SODA_FIZZINESS_SHAKE
 		return
@@ -260,6 +264,13 @@
 	list_reagents = list(/datum/reagent/consumable/shamblers = 30, /datum/reagent/eldritch = 5)
 	drink_type = SUGAR | JUNKFOOD
 
+/obj/item/reagent_containers/cup/soda_cans/wellcheers
+	name = "Wellcheers Juice"
+	desc = "A strange purple drink, smelling of saltwater. Somewhere in the distance, you hear seagulls."
+	icon_state = "wellcheers"
+	list_reagents = list(/datum/reagent/consumable/wellcheers = 30)
+	drink_type = SUGAR | JUNKFOOD
+
 /obj/item/reagent_containers/cup/soda_cans/grey_bull
 	name = "Grey Bull"
 	desc = "Grey Bull, it gives you gloves!"
@@ -276,8 +287,51 @@
 	list_reagents = list(/datum/reagent/consumable/monkey_energy = 50)
 	drink_type = SUGAR | JUNKFOOD
 
+/obj/item/reagent_containers/cup/soda_cans/volt_energy
+	name = "24-Volt Energy"
+	desc = "Recharge, with 24-Volt Energy!"
+	icon_state = "volt_energy"
+	list_reagents = list(/datum/reagent/consumable/volt_energy = 30)
+	drink_type = SUGAR | JUNKFOOD
+
+/obj/item/reagent_containers/cup/soda_cans/melon_soda
+	name = "Kansumi Melon Soda"
+	desc = "Japan's favourite melon soda, now available in can form!"
+	icon_state = "melon_soda"
+	list_reagents = list(/datum/reagent/consumable/melon_soda = 30)
+	drink_type = SUGAR | JUNKFOOD
+
 /obj/item/reagent_containers/cup/soda_cans/air
 	name = "canned air"
 	desc = "There is no air shortage. Do not drink."
 	icon_state = "air"
 	list_reagents = list(/datum/reagent/nitrogen = 24, /datum/reagent/oxygen = 6)
+
+/obj/item/reagent_containers/cup/soda_cans/beer
+	name = "space beer"
+	desc = "Canned beer. In space."
+	icon_state = "space_beer"
+	volume = 40
+	list_reagents = list(/datum/reagent/consumable/ethanol/beer = 40)
+	drink_type = GRAIN
+
+/obj/item/reagent_containers/cup/soda_cans/beer/rice
+	name = "rice beer"
+	desc = "A light, rice-based lagered beer popular on Mars. Considered a hate crime against Bavarians under the Reinheitsgebot Act of 1516."
+	icon_state = "ebisu"
+	list_reagents = list(/datum/reagent/consumable/ethanol/rice_beer = 40)
+
+/obj/item/reagent_containers/cup/soda_cans/beer/rice/Initialize(mapload)
+	. = ..()
+	var/brand = pick("Ebisu Super Dry", "Shimauma Ichiban", "Moonlabor Malt's")
+	name = "[brand]"
+	switch(brand)
+		if("Ebisu Super Dry")
+			icon_state = "ebisu"
+			desc = "Mars' favourite rice beer brand, 200 years running."
+		if("Shimauma Ichiban")
+			icon_state = "shimauma"
+			desc = "Mars' most middling rice beer brand. Not as popular as Ebisu, but it's comfortable in second place."
+		if("Moonlabor Malt's")
+			icon_state = "moonlabor"
+			desc = "Mars' underdog rice beer brand. Popular amongst the Yakuza, for reasons unknown."

@@ -7,7 +7,8 @@
 
 	school = SCHOOL_EVOCATION
 	cooldown_time = 5 SECONDS
-	cooldown_reduction_per_rank = 1 SECONDS
+	cooldown_reduction_per_rank = 2 SECONDS
+	spell_max_level = 3
 
 	invocation = "Sigi'lu M'Fan 'Tasia!"
 	invocation_type = INVOCATION_SHOUT
@@ -80,4 +81,4 @@
 
 	to_fire.pixel_x = rand(-projectile_location_spread_amount, projectile_location_spread_amount)
 	to_fire.pixel_y = rand(-projectile_location_spread_amount, projectile_location_spread_amount)
-	to_fire.preparePixelProjectile(target, user, null, current_angle)
+	to_fire.aim_projectile(target, user, null, current_angle)

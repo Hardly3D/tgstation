@@ -26,7 +26,7 @@
 	var/require_comms_key = FALSE
 
 /datum/world_topic/proc/TryRun(list/input)
-	key_valid = config && (CONFIG_GET(string/comms_key) == input["key"])
+	key_valid = (CONFIG_GET(string/comms_key) == input["key"]) && CONFIG_GET(string/comms_key) && input["key"]
 	input -= "key"
 	if(require_comms_key && !key_valid)
 		. = "Bad Key"
@@ -114,8 +114,8 @@
 
 	var/message = "<b color='orange'>CROSS-SECTOR MESSAGE (INCOMING):</b> [input["sender_ckey"]] (from [input["source"]]) is about to send \
 			the following message (will autoapprove in [soft_filter_passed ? "[extended_time_display]" : "[normal_time_display]"]): \
-			<b><a href='?src=[REF(src)];reject_cross_comms_message=[timer_id]'>REJECT</a></b><br><br>\
-			[html_encode(input["message"])]"
+			<b><a href='byond://?src=[REF(src)];reject_cross_comms_message=[timer_id]'>REJECT</a></b><br><br>\
+			[input["message"]]"
 
 	if(soft_filter_passed)
 		message += "<br><br><b>NOTE: This message passed the soft filter on the origin server! The time was automatically expanded to [extended_time_display].</b>"
@@ -194,7 +194,7 @@
 /datum/world_topic/status/Run(list/input)
 	. = list()
 	.["version"] = GLOB.game_version
-	.["respawn"] = config ? !CONFIG_GET(flag/norespawn) : FALSE
+	.["respawn"] = config ? !!CONFIG_GET(flag/allow_respawn) : FALSE // show respawn as true regardless of "respawn as char" or "free respawn"
 	.["enter"] = !LAZYACCESS(SSlag_switch.measures, DISABLE_NON_OBSJOBS)
 	.["ai"] = CONFIG_GET(flag/allow_ai)
 	.["host"] = world.host ? world.host : null
@@ -205,6 +205,10 @@
 	.["hub"] = GLOB.hub_visibility
 	.["identifier"] = CONFIG_GET(string/serversqlname)
 
+	var/public_address = CONFIG_GET(string/public_address)
+	if(public_address)
+		.["public_address"] = public_address
+
 
 	var/list/adm = get_admin_counts()
 	var/list/presentmins = adm["present"]
@@ -212,7 +216,7 @@
 	.["admins"] = presentmins.len + afkmins.len //equivalent to the info gotten from adminwho
 	.["gamestate"] = SSticker.current_state
 
-	.["map_name"] = SSmapping.config?.map_name || "Loading..."
+	.["map_name"] = SSmapping.current_map.map_name || "Loading..."
 
 	if(key_valid)
 		.["active_players"] = get_active_player_count()
@@ -239,4 +243,3 @@
 		// Shuttle status, see /__DEFINES/stat.dm
 		.["shuttle_timer"] = SSshuttle.emergency.timeLeft()
 		// Shuttle timer, in seconds
-

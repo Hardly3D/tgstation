@@ -40,7 +40,7 @@
 	icon_state ||= initial(preview_item.icon_state_preview) || initial(preview_item.icon_state)
 
 	if(PERFORM_ALL_TESTS(focus_only/bad_cooking_crafting_icons))
-		if(!icon_exists(icon_file, icon_state, scream = TRUE))
+		if(!icon_exists_or_scream(icon_file, icon_state))
 			return
 
 	Insert("a[id]", icon(icon_file, icon_state, SOUTH))
@@ -49,12 +49,12 @@
 /datum/asset/spritesheet/crafting/proc/add_tool_icons()
 	var/list/tool_icons = list(
 		TOOL_CROWBAR = icon('icons/obj/tools.dmi', "crowbar"),
-		TOOL_MULTITOOL = icon('icons/obj/device.dmi', "multitool"),
+		TOOL_MULTITOOL = icon('icons/obj/devices/tool.dmi', "multitool"),
 		TOOL_SCREWDRIVER = icon('icons/obj/tools.dmi', "screwdriver_map"),
 		TOOL_WIRECUTTER = icon('icons/obj/tools.dmi', "cutters_map"),
 		TOOL_WRENCH = icon('icons/obj/tools.dmi', "wrench"),
 		TOOL_WELDER = icon('icons/obj/tools.dmi', "welder"),
-		TOOL_ANALYZER = icon('icons/obj/device.dmi', "analyzer"),
+		TOOL_ANALYZER = icon('icons/obj/devices/scanner.dmi', "analyzer"),
 		TOOL_MINING = icon('icons/obj/mining.dmi', "minipick"),
 		TOOL_SHOVEL = icon('icons/obj/mining.dmi', "spade"),
 		TOOL_RETRACTOR = icon('icons/obj/medical/surgery_tools.dmi', "retractor"),

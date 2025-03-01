@@ -45,6 +45,8 @@
 #define PORT_TYPE_ATOM "entity"
 /// Datum datatype
 #define PORT_TYPE_DATUM "datum"
+/// User datatype
+#define PORT_TYPE_USER "user"
 
 
 /// The maximum range between a port and an atom
@@ -121,6 +123,8 @@
 #define CIRCUIT_FLAG_REFUSE_MODULE (1<<5)
 /// This circuit component cannot be inserted into the same circuit multiple times. Only use this for major headaches.
 #define CIRCUIT_NO_DUPLICATES (1<<6)
+/// This circuit component is currently disabled via configs
+#define CIRCUIT_FLAG_DISABLED (1<<7)
 
 // Datatype flags
 /// The datatype supports manual inputs

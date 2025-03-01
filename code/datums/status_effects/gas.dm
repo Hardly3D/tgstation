@@ -23,7 +23,7 @@
 	owner.add_overlay(cube)
 
 
-/datum/status_effect/freon/tick()
+/datum/status_effect/freon/tick(seconds_between_ticks)
 	if(can_melt && owner.bodytemperature >= owner.get_body_temp_normal())
 		qdel(src)
 
@@ -33,11 +33,9 @@
 
 /datum/status_effect/freon/proc/do_resist()
 	to_chat(owner, span_notice("You start breaking out of the ice cube..."))
-	if(do_after(owner, owner, 4 SECONDS))
-		if(!QDELETED(src))
-			to_chat(owner, span_notice("You break out of the ice cube!"))
-			owner.remove_status_effect(/datum/status_effect/freon)
-
+	if(do_after(owner, 4 SECONDS, target = owner))
+		to_chat(owner, span_notice("You break out of the ice cube!"))
+		qdel(src)
 
 /datum/status_effect/freon/on_remove()
 	if(!owner.stat)
@@ -52,9 +50,12 @@
 	duration = 8
 	can_melt = FALSE
 
+/datum/status_effect/freon/watcher/extended
+	duration = 5 SECONDS
+
 /datum/status_effect/freon/lasting
 	id = "lasting_frozen"
-	duration = -1
+	duration = STATUS_EFFECT_PERMANENT
 
 /datum/status_effect/hypernob_protection
 	id = "hypernob_protection"
@@ -75,7 +76,7 @@
 		CRASH("[type] status effect added to non-human owner: [owner ? owner.type : "null owner"]")
 	var/mob/living/carbon/human/human_owner = owner
 	human_owner.add_movespeed_modifier(/datum/movespeed_modifier/reagent/hypernoblium) //small slowdown as a tradeoff
-	ADD_TRAIT(human_owner, TRAIT_NOFIRE, type)
+	ADD_TRAIT(human_owner, TRAIT_NOFIRE, TRAIT_STATUS_EFFECT(id))
 	return TRUE
 
 /datum/status_effect/hypernob_protection/on_remove()
@@ -83,4 +84,4 @@
 		stack_trace("[type] status effect being removed from non-human owner: [owner ? owner.type : "null owner"]")
 	var/mob/living/carbon/human/human_owner = owner
 	human_owner.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/hypernoblium)
-	REMOVE_TRAIT(human_owner, TRAIT_NOFIRE, type)
+	REMOVE_TRAIT(human_owner, TRAIT_NOFIRE, TRAIT_STATUS_EFFECT(id))

@@ -23,6 +23,10 @@
 	resistance_flags = NONE
 	max_integrity = 300
 	storage_type = /datum/storage/backpack
+	pickup_sound = 'sound/items/handling/backpack/backpack_pickup1.ogg'
+	drop_sound = 'sound/items/handling/backpack/backpack_drop1.ogg'
+	equip_sound = 'sound/items/equip/backpack_equip.ogg'
+	sound_vary = TRUE
 
 /obj/item/storage/backpack/Initialize(mapload)
 	. = ..()
@@ -32,13 +36,9 @@
  * Backpack Types
  */
 
-/obj/item/storage/backpack/old/Initialize(mapload)
-	. = ..()
-	atom_storage.max_total_storage = 12
-
 /obj/item/bag_of_holding_inert
 	name = "inert bag of holding"
-	desc = "What is currently a just an unwieldly block of metal with a slot ready to accept a bluespace anomaly core."
+	desc = "What is currently a just an unwieldy block of metal with a slot ready to accept a bluespace anomaly core."
 	icon = 'icons/obj/storage/backpack.dmi'
 	worn_icon = 'icons/mob/clothing/back/backpack.dmi'
 	icon_state = "bag_of_holding-inert"
@@ -49,6 +49,11 @@
 	resistance_flags = FIRE_PROOF
 	item_flags = NO_MAT_REDEMPTION
 
+/obj/item/bag_of_holding_inert/Initialize(mapload)
+	. = ..()
+	var/static/list/recipes = list(/datum/crafting_recipe/boh)
+	AddElement(/datum/element/slapcrafting, recipes)
+
 /obj/item/storage/backpack/holding
 	name = "bag of holding"
 	desc = "A backpack that opens into a localized pocket of bluespace."
@@ -58,6 +63,8 @@
 	item_flags = NO_MAT_REDEMPTION
 	armor_type = /datum/armor/backpack_holding
 	storage_type = /datum/storage/bag_of_holding
+	pickup_sound = null
+	drop_sound = null
 
 /datum/armor/backpack_holding
 	fire = 60
@@ -72,13 +79,13 @@
 	user.suicide_log()
 	qdel(user)
 
+
 /obj/item/storage/backpack/santabag
 	name = "Santa's Gift Bag"
 	desc = "Space Santa uses this to deliver presents to all the nice children in space in Christmas! Wow, it's pretty big!"
 	icon_state = "giftbag0"
 	inhand_icon_state = "giftbag"
 	w_class = WEIGHT_CLASS_BULKY
-	storage_type = /datum/storage/backpack/santabag
 
 /obj/item/storage/backpack/santabag/Initialize(mapload)
 	. = ..()
@@ -96,7 +103,7 @@
 		return
 	if(HAS_MIND_TRAIT(user, TRAIT_CANNOT_OPEN_PRESENTS))
 		var/turf/floor = get_turf(src)
-		var/obj/item/thing = new /obj/item/a_gift/anything(floor)
+		var/obj/item/thing = new /obj/item/gift/anything(floor)
 		if(!atom_storage.attempt_insert(thing, user, override = TRUE, force = STORAGE_SOFT_LOCKED))
 			qdel(thing)
 
@@ -187,6 +194,12 @@
 	icon_state = "backpack-virology"
 	inhand_icon_state = "viropack"
 
+/obj/item/storage/backpack/floortile
+	name = "floortile backpack"
+	desc = "It's a backpack especially designed for use in floortiles..."
+	icon_state = "floortile_backpack"
+	inhand_icon_state = "backpack"
+
 /obj/item/storage/backpack/ert
 	name = "emergency response team commander backpack"
 	desc = "A spacious backpack with lots of pockets, worn by the Commander of an Emergency Response Team."
@@ -241,8 +254,9 @@
 	throwforce = 15
 	attack_verb_continuous = list("MEATS", "MEAT MEATS")
 	attack_verb_simple = list("MEAT", "MEAT MEAT")
+	custom_materials = list(/datum/material/meat = SHEET_MATERIAL_AMOUNT * 25) // MEAT
 	///Sounds used in the squeak component
-	var/list/meat_sounds = list('sound/effects/blobattack.ogg' = 1)
+	var/list/meat_sounds = list('sound/effects/blob/blobattack.ogg' = 1)
 	///Reagents added to the edible component, ingested when you EAT the MEAT
 	var/list/meat_reagents = list(
 		/datum/reagent/consumable/nutriment/protein = 10,
@@ -257,13 +271,26 @@
 
 /obj/item/storage/backpack/meat/Initialize(mapload)
 	. = ..()
-	AddComponent(/datum/component/edible,\
+	AddComponent(
+		/datum/component/edible,\
 		initial_reagents = meat_reagents,\
 		foodtypes = foodtypes,\
 		tastes = tastes,\
 		eatverbs = eatverbs,\
 	)
 	AddComponent(/datum/component/squeak, meat_sounds)
+	AddComponent(
+		/datum/component/blood_walk,\
+		blood_type = /obj/effect/decal/cleanable/blood,\
+		blood_spawn_chance = 15,\
+		max_blood = custom_materials[custom_materials[1]] / SHEET_MATERIAL_AMOUNT,\
+	)
+	AddComponent(
+		/datum/component/bloody_spreader,\
+		blood_left = custom_materials[custom_materials[1]] / SHEET_MATERIAL_AMOUNT,\
+		blood_dna = list("MEAT DNA" = "MT+"),\
+		diseases = null,\
+	)
 
 /*
  * Satchel Types
@@ -356,7 +383,7 @@
 
 /obj/item/storage/backpack/satchel/flat
 	name = "smuggler's satchel"
-	desc = "A very slim satchel that can easily fit into tight spaces."
+	desc = "A very slim satchel that can easily fit into tight spaces. Its contents cannot be detected by contraband scanners."
 	icon_state = "satchel-flat"
 	inhand_icon_state = "satchel-flat"
 	w_class = WEIGHT_CLASS_NORMAL //Can fit in backpacks itself.
@@ -365,7 +392,8 @@
 	. = ..()
 	AddElement(/datum/element/undertile, TRAIT_T_RAY_VISIBLE, INVISIBILITY_OBSERVER, use_anchor = TRUE)
 	atom_storage.max_total_storage = 15
-	atom_storage.set_holdable(cant_hold_list = list(/obj/item/storage/backpack/satchel/flat)) //muh recursive backpacks)
+	atom_storage.set_holdable(cant_hold_list = /obj/item/storage/backpack/satchel/flat) //muh recursive backpacks
+	ADD_TRAIT(src, TRAIT_CONTRABAND_BLOCKER, INNATE_TRAIT)
 
 /obj/item/storage/backpack/satchel/flat/PopulateContents()
 	for(var/items in 1 to 4)
@@ -392,6 +420,14 @@
 	/// If this bag is zipped (contents hidden) up or not
 	/// Starts enabled so you're forced to interact with it to "get" it
 	var/zipped_up = TRUE
+	// How much time it takes to zip up (close) the duffelbag
+	var/zip_up_duration = 0.5 SECONDS
+	// Audio played during zipup
+	var/zip_up_sfx = 'sound/items/zip/zip_up.ogg'
+	// How much time it takes to unzip the duffel
+	var/unzip_duration = 2.1 SECONDS
+	// Audio played during unzip
+	var/unzip_sfx = 'sound/items/zip/un_zip.ogg'
 
 /obj/item/storage/backpack/duffelbag/Initialize(mapload)
 	. = ..()
@@ -425,9 +461,9 @@
 		return ..()
 
 	balloon_alert(user, "unzipping...")
-	playsound(src, 'sound/items/un_zip.ogg', 100, FALSE)
+	playsound(src, unzip_sfx, 100, FALSE)
 	var/datum/callback/can_unzip = CALLBACK(src, PROC_REF(zipper_matches), TRUE)
-	if(!do_after(user, 2.1 SECONDS, src, extra_checks = can_unzip))
+	if(!do_after(user, unzip_duration, src, extra_checks = can_unzip))
 		user.balloon_alert(user, "unzip failed!")
 		return
 	balloon_alert(user, "unzipped")
@@ -442,9 +478,9 @@
 		return SECONDARY_ATTACK_CALL_NORMAL
 
 	balloon_alert(user, "zipping...")
-	playsound(src, 'sound/items/zip_up.ogg', 100, FALSE)
+	playsound(src, zip_up_sfx, 100, FALSE)
 	var/datum/callback/can_zip = CALLBACK(src, PROC_REF(zipper_matches), FALSE)
-	if(!do_after(user, 0.5 SECONDS, src, extra_checks = can_zip))
+	if(!do_after(user, zip_up_duration, src, extra_checks = can_zip))
 		user.balloon_alert(user, "zip failed!")
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 	balloon_alert(user, "zipped")
@@ -463,7 +499,8 @@
 		slowdown = initial(slowdown)
 		atom_storage.locked = STORAGE_SOFT_LOCKED
 		atom_storage.display_contents = FALSE
-		atom_storage.close_all()
+		for(var/obj/item/weapon as anything in get_all_contents_type(/obj/item)) //close ui of this and all items inside dufflebag
+			weapon.atom_storage?.close_all() //not everything has storage initialized
 	else
 		slowdown = zip_slowdown
 		atom_storage.locked = STORAGE_NOT_LOCKED
@@ -499,10 +536,6 @@
 	desc = "A large duffel bag for holding extra medical supplies."
 	icon_state = "duffel-medical"
 	inhand_icon_state = "duffel-med"
-
-/obj/item/storage/backpack/duffelbag/med/surgery
-	name = "surgical duffel bag"
-	desc = "A large duffel bag for holding extra medical supplies - this one seems to be designed for holding surgical tools."
 
 /obj/item/storage/backpack/duffelbag/coroner
 	name = "coroner duffel bag"
@@ -545,21 +578,6 @@
 	desc = "A large duffel bag for holding extra viral bottles."
 	icon_state = "duffel-virology"
 	inhand_icon_state = "duffel-virology"
-
-
-
-/obj/item/storage/backpack/duffelbag/med/surgery/PopulateContents()
-	new /obj/item/scalpel(src)
-	new /obj/item/hemostat(src)
-	new /obj/item/retractor(src)
-	new /obj/item/circular_saw(src)
-	new /obj/item/surgicaldrill(src)
-	new /obj/item/cautery(src)
-	new /obj/item/bonesetter(src)
-	new /obj/item/surgical_drapes(src)
-	new /obj/item/clothing/mask/surgical(src)
-	new /obj/item/razor(src)
-	new /obj/item/blood_filter(src)
 
 /obj/item/storage/backpack/duffelbag/sec
 	name = "security duffel bag"
@@ -621,11 +639,16 @@
 
 /obj/item/storage/backpack/duffelbag/syndie
 	name = "suspicious looking duffel bag"
-	desc = "A large duffel bag for holding extra tactical supplies."
+	desc = "A large duffel bag for holding extra tactical supplies. It contains an oiled plastitanium zipper for maximum speed tactical zipping, and is better balanced on your back than an average duffelbag. Can hold two bulky items!"
 	icon_state = "duffel-syndie"
 	inhand_icon_state = "duffel-syndieammo"
 	storage_type = /datum/storage/duffel/syndicate
 	resistance_flags = FIRE_PROOF
+	// Less slowdown while unzipped. Still bulky, but it won't halve your movement speed in an active combat situation.
+	zip_slowdown = 0.3
+	// Faster unzipping. Utilizes the same noise as zipping up to fit the unzip duration.
+	unzip_duration = 0.5 SECONDS
+	unzip_sfx = 'sound/items/zip/zip_up.ogg'
 
 /obj/item/storage/backpack/duffelbag/syndie/hitman
 	desc = "A large duffel bag for holding extra things. There is a Nanotrasen logo on the back."
@@ -633,7 +656,7 @@
 	inhand_icon_state = "duffel-syndieammo"
 
 /obj/item/storage/backpack/duffelbag/syndie/hitman/PopulateContents()
-	new /obj/item/clothing/under/suit/black(src)
+	new /obj/item/clothing/under/costume/buttondown/slacks/service(src)
 	new /obj/item/clothing/neck/tie/red/hitman(src)
 	new /obj/item/clothing/accessory/waistcoat(src)
 	new /obj/item/clothing/suit/toggle/lawyer/black(src)
@@ -660,12 +683,11 @@
 	new /obj/item/cautery/advanced(src)
 	new /obj/item/surgical_drapes(src)
 	new /obj/item/reagent_containers/medigel/sterilizine(src)
-	new /obj/item/surgicaldrill(src)
 	new /obj/item/bonesetter(src)
 	new /obj/item/blood_filter(src)
 	new /obj/item/stack/medical/bone_gel(src)
 	new /obj/item/stack/sticky_tape/surgical(src)
-	new /obj/item/roller(src)
+	new /obj/item/emergency_bed(src)
 	new /obj/item/clothing/suit/jacket/straight_jacket(src)
 	new /obj/item/clothing/mask/muzzle(src)
 	new /obj/item/mmi/syndie(src)
@@ -675,23 +697,6 @@
 	desc = "A large duffel bag for holding extra weapons ammunition and supplies."
 	icon_state = "duffel-syndieammo"
 	inhand_icon_state = "duffel-syndieammo"
-
-/obj/item/storage/backpack/duffelbag/syndie/ammo/shotgun
-	desc = "A large duffel bag, packed to the brim with Bulldog shotgun magazines."
-
-/obj/item/storage/backpack/duffelbag/syndie/ammo/shotgun/PopulateContents()
-	for(var/i in 1 to 6)
-		new /obj/item/ammo_box/magazine/m12g(src)
-	new /obj/item/ammo_box/magazine/m12g/slug(src)
-	new /obj/item/ammo_box/magazine/m12g/slug(src)
-	new /obj/item/ammo_box/magazine/m12g/dragon(src)
-
-/obj/item/storage/backpack/duffelbag/syndie/ammo/smg
-	desc = "A large duffel bag, packed to the brim with C-20r magazines."
-
-/obj/item/storage/backpack/duffelbag/syndie/ammo/smg/PopulateContents()
-	for(var/i in 1 to 9)
-		new /obj/item/ammo_box/magazine/smgm45(src)
 
 /obj/item/storage/backpack/duffelbag/syndie/ammo/mech
 	desc = "A large duffel bag, packed to the brim with various exosuit ammo."
@@ -717,30 +722,12 @@
 	new /obj/item/mecha_ammo/missiles_srm(src)
 	new /obj/item/mecha_ammo/missiles_srm(src)
 
-/obj/item/storage/backpack/duffelbag/syndie/c20rbundle
-	desc = "A large duffel bag containing a C-20r, some magazines, and a cheap looking suppressor."
-
-/obj/item/storage/backpack/duffelbag/syndie/c20rbundle/PopulateContents()
-	new /obj/item/ammo_box/magazine/smgm45(src)
-	new /obj/item/ammo_box/magazine/smgm45(src)
-	new /obj/item/gun/ballistic/automatic/c20r(src)
-	new /obj/item/suppressor(src)
-
-/obj/item/storage/backpack/duffelbag/syndie/bulldogbundle
-	desc = "A large duffel bag containing a Bulldog, some drums, and a pair of thermal imaging glasses."
-
-/obj/item/storage/backpack/duffelbag/syndie/bulldogbundle/PopulateContents()
-	new /obj/item/gun/ballistic/shotgun/bulldog(src)
-	new /obj/item/ammo_box/magazine/m12g(src)
-	new /obj/item/ammo_box/magazine/m12g(src)
-	new /obj/item/clothing/glasses/thermal/syndi(src)
-
 /obj/item/storage/backpack/duffelbag/syndie/med/medicalbundle
 	desc = "A large duffel bag containing a medical equipment, a Donksoft LMG, a big jumbo box of riot darts, and a magboot MODsuit module."
 
 /obj/item/storage/backpack/duffelbag/syndie/med/medicalbundle/PopulateContents()
 	new /obj/item/mod/module/magboot(src)
-	new /obj/item/storage/medkit/tactical(src)
+	new /obj/item/storage/medkit/tactical/premium(src)
 	new /obj/item/gun/ballistic/automatic/l6_saw/toy(src)
 	new /obj/item/ammo_box/foambox/riot(src)
 
@@ -818,3 +805,90 @@
 	new /obj/item/gun/energy/recharge/kinetic_accelerator(src)
 	new /obj/item/knife/combat/survival(src)
 	new /obj/item/flashlight/seclite(src)
+
+/*
+ * Messenger Bag Types
+ */
+
+/obj/item/storage/backpack/messenger
+	name = "messenger bag"
+	desc = "A trendy looking messenger bag; sometimes known as a courier bag. Fashionable and portable."
+	icon_state = "messenger"
+	inhand_icon_state = "messenger"
+	icon = 'icons/obj/storage/backpack.dmi'
+	worn_icon = 'icons/mob/clothing/back/backpack.dmi'
+	lefthand_file = 'icons/mob/inhands/equipment/backpack_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/equipment/backpack_righthand.dmi'
+
+/obj/item/storage/backpack/messenger/eng
+	name = "industrial messenger bag"
+	desc = "A tough messenger bag made of advanced treated leather for fireproofing. It also has more pockets than usual."
+	icon_state = "messenger_engineering"
+	inhand_icon_state = "messenger_engineering"
+	resistance_flags = FIRE_PROOF
+
+/obj/item/storage/backpack/messenger/med
+	name = "medical messenger bag"
+	desc = "A sterile messenger bag well loved by medics for its portability and sleek profile."
+	icon_state = "messenger_medical"
+	inhand_icon_state = "messenger_medical"
+
+/obj/item/storage/backpack/messenger/vir
+	name = "virologist messenger bag"
+	desc = "A sterile messenger bag with virologist colours, useful for deploying biohazards in record times."
+	icon_state = "messenger_virology"
+	inhand_icon_state = "messenger_virology"
+
+/obj/item/storage/backpack/messenger/chem
+	name = "chemist messenger bag"
+	desc = "A sterile messenger bag with chemist colours, good for getting to your alleyway deals on time."
+	icon_state = "messenger_chemistry"
+	inhand_icon_state = "messenger_chemistry"
+
+/obj/item/storage/backpack/messenger/coroner
+	name = "coroner messenger bag"
+	desc = "A messenger bag used to sneak your way out of graveyards at a good pace."
+	icon_state = "messenger_coroner"
+	inhand_icon_state = "messenger_coroner"
+
+/obj/item/storage/backpack/messenger/gen
+	name = "geneticist messenger bag"
+	desc = "A sterile messenger bag with geneticist colours, making a remarkably cute accessory for hulks."
+	icon_state = "messenger_genetics"
+	inhand_icon_state = "messenger_genetics"
+
+/obj/item/storage/backpack/messenger/science
+	name = "scientist messenger bag"
+	desc = "Useful for holding research materials, and for speeding your way to different scan objectives."
+	icon_state = "messenger_science"
+	inhand_icon_state = "messenger_science"
+
+/obj/item/storage/backpack/messenger/hyd
+	name = "botanist messenger bag"
+	desc = "A messenger bag made of all natural fibers, great for getting to the sesh in time."
+	icon_state = "messenger_hydroponics"
+	inhand_icon_state = "messenger_hydroponics"
+
+/obj/item/storage/backpack/messenger/sec
+	name = "security messenger bag"
+	desc = "A robust messenger bag for security related needs."
+	icon_state = "messenger_security"
+	inhand_icon_state = "messenger_security"
+
+/obj/item/storage/backpack/messenger/explorer
+	name = "explorer messenger bag"
+	desc = "A robust messenger bag for stashing your loot, as well as making a remarkably cute accessory for your drakebone armor."
+	icon_state = "messenger_explorer"
+	inhand_icon_state = "messenger_explorer"
+
+/obj/item/storage/backpack/messenger/cap
+	name = "captain's messenger bag"
+	desc = "An exclusive messenger bag for Nanotrasen officers, made of real whale leather."
+	icon_state = "messenger_captain"
+	inhand_icon_state = "messenger_captain"
+
+/obj/item/storage/backpack/messenger/clown
+	name = "Giggles von Honkerton Jr."
+	desc = "The latest in storage 'technology' from Honk Co. Hey, how does this fit so much with such a small profile anyway? The wearer will definitely never tell you."
+	icon_state = "messenger_clown"
+	inhand_icon_state = "messenger_clown"

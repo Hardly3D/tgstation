@@ -6,7 +6,8 @@
 	desc = "This is rubbish."
 	w_class = WEIGHT_CLASS_TINY
 	resistance_flags = FLAMMABLE
-	item_flags = NOBLUDGEON
+	item_flags = NOBLUDGEON|SKIP_FANTASY_ON_SPAWN
+	custom_materials = list(/datum/material/plastic=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/Initialize(mapload)
 	var/turf/T = get_turf(src)
@@ -23,6 +24,7 @@
 /obj/item/trash/raisins
 	name = "\improper 4no raisins"
 	icon_state= "4no_raisins"
+	custom_materials = list(/datum/material/cardboard=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/candy
 	name = "candy"
@@ -57,6 +59,7 @@
 /obj/item/trash/popcorn
 	name = "popcorn"
 	icon_state = "popcorn"
+	custom_materials = list(/datum/material/cardboard=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/popcorn/caramel
 	name = "empty caramel popcorn"
@@ -75,14 +78,17 @@
 /obj/item/trash/syndi_cakes
 	name = "syndi-cakes"
 	icon_state = "syndi_cakes"
+	custom_materials = list(/datum/material/cardboard=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/energybar
 	name = "energybar wrapper"
 	icon_state = "energybar"
 
-/obj/item/trash/waffles
-	name = "waffles tray"
-	icon_state = "waffles"
+/obj/item/trash/fleet_ration
+	name = "surplus fleet wrapper"
+	desc = "In the Mothic Fleet every individual wrapper is carefully recycled and repurposed into fresh material. Over here they are more commonly dropped directly onto the floor."
+	icon_state = "moth_ration"
+	custom_materials = list(/datum/material/cardboard=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/pistachios
 	name = "pistachios pack"
@@ -95,27 +101,32 @@
 /obj/item/trash/semki/healthy
 	name = "nibbled sunflower seeds"
 	icon_state = "sunseeds"
+	custom_materials = null
 
 /obj/item/trash/tray
 	name = "tray"
 	icon_state = "tray"
 	resistance_flags = NONE
+	custom_materials = list(/datum/material/iron=SMALL_MATERIAL_AMOUNT*4)
 
 /obj/item/trash/candle
 	name = "melted candle"
 	icon = 'icons/obj/candle.dmi'
 	icon_state = "candle4"
+	custom_materials = null
 
 /obj/item/trash/flare
 	name = "burnt flare"
 	icon = 'icons/obj/lighting.dmi'
 	icon_state = "flare-empty"
+	custom_materials = list(/datum/material/iron=SMALL_MATERIAL_AMOUNT*2,/datum/material/glass=SMALL_MATERIAL_AMOUNT,)
 
 /obj/item/trash/can
 	name = "crushed can"
 	icon_state = "cola"
 	resistance_flags = NONE
 	grind_results = list(/datum/reagent/aluminium = 10)
+	custom_materials = list(/datum/material/iron=SMALL_MATERIAL_AMOUNT*2)
 
 /obj/item/trash/can/food
 	icon = 'icons/obj/food/canned.dmi'
@@ -180,3 +191,47 @@
 	desc = "It's been Donk-decimated."
 	icon_state = "ready_donk"
 
+/obj/item/trash/can/food/squid_ink
+	name = "canned squid ink"
+	icon_state = "squidinkcan_empty"
+
+/obj/item/trash/can/food/chap
+	name = "can of CHAP"
+	icon_state = "chapcan_empty"
+
+/obj/item/trash/hot_shots
+	name = "\improper Hot Shots box"
+	icon_state = "hot_shots"
+
+/obj/item/trash/sticko
+	name = "\improper Sticko box"
+	icon_state = "sticko"
+	custom_materials = list(/datum/material/cardboard=SMALL_MATERIAL_AMOUNT*2)
+
+/obj/item/trash/sticko/matcha
+	icon_state = "sticko_matcha"
+
+/obj/item/trash/sticko/nutty
+	icon_state = "sticko_nutty"
+
+/obj/item/trash/sticko/pineapple
+	icon_state = "sticko_pineapple"
+
+/obj/item/trash/sticko/yuyake
+	icon_state = "sticko_yuyake"
+
+/obj/item/trash/shok_roks
+	name = "\improper Shok-Roks packet"
+	icon_state = "shok_roks"
+
+/obj/item/trash/shok_roks/citrus
+	icon_state = "shok_roks_citrus"
+
+/obj/item/trash/shok_roks/berry
+	icon_state = "shok_roks_berry"
+
+/obj/item/trash/shok_roks/tropical
+	icon_state = "shok_roks_tropical"
+
+/obj/item/trash/shok_roks/lanternfruit
+	icon_state = "shok_roks_lanternfruit"

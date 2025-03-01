@@ -7,6 +7,7 @@
 	base_icon_state = "pdapainter"
 	density = TRUE
 	max_integrity = 200
+	integrity_failure = 0.5
 	/// Current ID card inserted into the machine.
 	var/obj/item/card/id/stored_id_card = null
 	/// Current PDA inserted into the machine.
@@ -66,7 +67,7 @@
 	QDEL_NULL(stored_id_card)
 	return ..()
 
-/obj/machinery/pdapainter/on_deconstruction()
+/obj/machinery/pdapainter/on_deconstruction(disassembled)
 	// Don't use ejection procs as we're gonna be destroyed anyway, so no need to update icons or anything.
 	if(stored_pda)
 		stored_pda.forceMove(loc)
@@ -93,11 +94,12 @@
 			if(stored_id_card)
 				SSexplosions.low_mov_atom += stored_id_card
 
-/obj/machinery/pdapainter/handle_atom_del(atom/A)
-	if(A == stored_pda)
+/obj/machinery/pdapainter/Exited(atom/movable/gone, direction)
+	. = ..()
+	if(gone == stored_pda)
 		stored_pda = null
 		update_appearance(UPDATE_ICON)
-	if(A == stored_id_card)
+	if(gone == stored_id_card)
 		stored_id_card = null
 		update_appearance(UPDATE_ICON)
 
@@ -105,7 +107,7 @@
 	. = ..()
 	if(default_unfasten_wrench(user, tool))
 		power_change()
-	return TOOL_ACT_TOOLTYPE_SUCCESS
+	return ITEM_INTERACT_SUCCESS
 
 /obj/machinery/pdapainter/attackby(obj/item/O, mob/living/user, params)
 	if(machine_stat & BROKEN)
@@ -158,9 +160,6 @@
 	else
 		eject_id_card(user)
 	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
-
-/obj/machinery/pdapainter/deconstruct(disassembled = TRUE)
-	atom_break()
 
 /**
  * Insert a PDA into the machine.
@@ -280,7 +279,7 @@
 
 	return data
 
-/obj/machinery/pdapainter/ui_act(action, params)
+/obj/machinery/pdapainter/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	if(.)
 		return
@@ -336,13 +335,19 @@
 			stored_pda.desc = initial(pda_path.desc)
 
 			return TRUE
+		if("reset_pda")
+			if((machine_stat & BROKEN) || !stored_pda)
+				return TRUE
+
+			stored_pda.reset_imprint()
+			return TRUE
 		if("trim_card")
 			if((machine_stat & BROKEN) || !stored_id_card)
 				return TRUE
 
 			var/selection = params["selection"]
 			for(var/path in card_trims)
-				if(!(card_trims[path] == selection))
+				if(card_trims[path] != selection)
 					continue
 
 				if(SSid_access.apply_trim_to_card(stored_id_card, path, copy_access = FALSE))

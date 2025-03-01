@@ -24,6 +24,16 @@
 		/obj/item/bodypart/head/larva,
 	)
 
+	default_organ_types_by_slot = list(
+		ORGAN_SLOT_BRAIN = /obj/item/organ/brain/alien,
+		ORGAN_SLOT_XENO_HIVENODE = /obj/item/organ/alien/hivenode,
+		ORGAN_SLOT_TONGUE = /obj/item/organ/tongue/alien,
+		ORGAN_SLOT_EYES = /obj/item/organ/eyes/alien,
+		ORGAN_SLOT_LIVER = /obj/item/organ/liver/alien,
+		ORGAN_SLOT_EARS = /obj/item/organ/ears,
+		ORGAN_SLOT_XENO_PLASMAVESSEL = /obj/item/organ/alien/plasmavessel/small/tiny,
+	)
+
 	var/amount_grown = 0
 	var/max_grown = 100
 	var/time_of_birth
@@ -31,15 +41,13 @@
 
 //This is fine right now, if we're adding organ specific damage this needs to be updated
 /mob/living/carbon/alien/larva/Initialize(mapload)
-	var/datum/action/cooldown/alien/larva_evolve/evolution = new(src)
-	evolution.Grant(src)
-	var/datum/action/cooldown/alien/hide/hide = new(src)
-	hide.Grant(src)
-	return ..()
+	var/static/list/innate_actions = list(
+		/datum/action/cooldown/alien/hide,
+		/datum/action/cooldown/alien/larva_evolve,
+	)
+	grant_actions_by_list(innate_actions)
 
-/mob/living/carbon/alien/larva/create_internal_organs()
-	organs += new /obj/item/organ/internal/alien/plasmavessel/small/tiny
-	..()
+	return ..()
 
 //This needs to be fixed
 // This comment is 12 years old I hope it's fixed by now

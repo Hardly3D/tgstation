@@ -16,12 +16,8 @@
 	aoe_radius = 2
 
 /datum/action/cooldown/spell/aoe/area_conversion/get_things_to_cast_on(atom/center)
-	var/list/things = list()
-	for(var/turf/nearby_turf in range(aoe_radius, center))
-		things += nearby_turf
-
-	return things
+	return RANGE_TURFS(aoe_radius, center)
 
 /datum/action/cooldown/spell/aoe/area_conversion/cast_on_thing_in_aoe(turf/victim, atom/caster)
-	playsound(victim, 'sound/items/welder.ogg', 75, TRUE)
+	playsound(victim, 'sound/items/tools/welder.ogg', 75, TRUE)
 	victim.narsie_act(FALSE, TRUE, 100 - (get_dist(victim, caster) * 25))

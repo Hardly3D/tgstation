@@ -1,8 +1,8 @@
-// A very special plant, deserving it's own file.
+// A very special plant, deserving its own file.
 
 // Yes, i'm talking about cabbage, baby! No, just kidding, but cabbages are the precursor to replica pods, so they are here as well.
 /obj/item/seeds/cabbage
-	name = "pack of cabbage seeds"
+	name = "cabbage seed pack"
 	desc = "These seeds grow into cabbages."
 	icon_state = "seed-cabbage"
 	species = "cabbage"
@@ -31,13 +31,13 @@
 
 ///The actual replica pods themselves!
 /obj/item/seeds/replicapod
-	name = "pack of replica pod seeds"
+	name = "replica pod seed pack"
 	desc = "These seeds grow into replica pods. They say these are used to harvest humans."
 	icon_state = "seed-replicapod"
 	plant_icon_offset = 2
 	species = "replicapod"
 	plantname = "Replica Pod"
-	product = /mob/living/carbon/human //verrry special -- Urist
+	product = null // the human mob is spawned in harvest()
 	lifespan = 50
 	endurance = 8
 	maturation = 10
@@ -61,22 +61,14 @@
 /obj/item/seeds/replicapod/Initialize(mapload)
 	. = ..()
 
-	create_reagents(volume, INJECTABLE|DRAWABLE)
+	create_reagents(volume, INJECTABLE | DRAWABLE)
 
 /obj/item/seeds/replicapod/create_reagents(max_vol, flags)
 	. = ..()
-	RegisterSignals(reagents, list(COMSIG_REAGENTS_ADD_REAGENT, COMSIG_REAGENTS_NEW_REAGENT), PROC_REF(on_reagent_add))
-	RegisterSignal(reagents, COMSIG_REAGENTS_DEL_REAGENT, PROC_REF(on_reagent_del))
-	RegisterSignal(reagents, COMSIG_QDELETING, PROC_REF(on_reagents_del))
-
-/// Handles the seeds' reagents datum getting deleted.
-/obj/item/seeds/replicapod/proc/on_reagents_del(datum/reagents/reagents)
-	SIGNAL_HANDLER
-	UnregisterSignal(reagents, list(COMSIG_REAGENTS_ADD_REAGENT, COMSIG_REAGENTS_NEW_REAGENT, COMSIG_REAGENTS_DEL_REAGENT, COMSIG_QDELETING))
-	return NONE
+	RegisterSignal(reagents, COMSIG_REAGENTS_HOLDER_UPDATED, PROC_REF(on_reagent_update))
 
 /// Handles reagents getting added to this seed.
-/obj/item/seeds/replicapod/proc/on_reagent_add(datum/reagents/reagents)
+/obj/item/seeds/replicapod/proc/on_reagent_update(datum/reagents/reagents)
 	SIGNAL_HANDLER
 	var/datum/reagent/blood/B = reagents.has_reagent(/datum/reagent/blood)
 	if(!B)
@@ -155,7 +147,7 @@
 		// Prevent accidental harvesting. Make sure the user REALLY wants to do this if there's a chance of this coming from a living creature.
 		if(mind || ckey)
 			var/choice = tgui_alert(usr,"The pod is currently devoid of soul. There is a possibility that a soul could claim this creature, or you could harvest it for seeds.", "Harvest Seeds?", list("Harvest Seeds", "Cancel"))
-			if(choice == "Cancel")
+			if(choice != "Harvest Seeds")
 				return result
 
 		// If this plant has already been harvested, return early.
@@ -189,15 +181,15 @@
 		podman.real_name = "Pod Person ([rand(1,999)])"
 	mind.transfer_to(podman)
 	if(ckey)
-		podman.ckey = ckey
+		podman.PossessByPlayer(ckey)
 	else
-		podman.ckey = ckey_holder
+		podman.PossessByPlayer(ckey_holder)
 	podman.gender = blood_gender
 	podman.faction |= factions
 	if(!features["mcolor"])
 		features["mcolor"] = "#59CE00"
 	if(!features["pod_hair"])
-		features["pod_hair"] = pick(GLOB.pod_hair_list)
+		features["pod_hair"] = pick(SSaccessories.pod_hair_list)
 
 	for(var/V in quirks)
 		new V(podman)

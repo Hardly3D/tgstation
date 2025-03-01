@@ -6,9 +6,13 @@
 	var/airlock_state
 	var/frequency
 
-/obj/machinery/door/airlock/Initialize(mapload)
+
+/obj/machinery/door/airlock/mouse_drop_receive(mob/living/dropping, mob/user, params)
 	. = ..()
-	RegisterSignal(SSdcs, COMSIG_GLOB_GREY_TIDE, PROC_REF(grey_tide))
+	// We add the component only once here & not in Initialize() because there are tons of airlocks & we don't want to add to their init times
+	// This is on airlock rather than on door because windoors are door and leaning looks whack on windoors
+	LoadComponent(/datum/component/leanable, dropping)
+
 
 /// Forces the airlock to unbolt and open
 /obj/machinery/door/airlock/proc/secure_open()
@@ -22,9 +26,9 @@
 	update_appearance()
 
 /// Forces the airlock to close and bolt
-/obj/machinery/door/airlock/proc/secure_close()
+/obj/machinery/door/airlock/proc/secure_close(force_crush = FALSE)
 	locked = FALSE
-	close(forced = TRUE)
+	close(forced = TRUE, force_crush = force_crush)
 
 	locked = TRUE
 	stoplag(0.2 SECONDS)
@@ -34,17 +38,6 @@
 	// Airlocks should unlock themselves when knock is casted, THEN open up.
 	locked = FALSE
 	return ..()
-
-/obj/machinery/door/airlock/proc/grey_tide(datum/source, list/grey_tide_areas)
-	SIGNAL_HANDLER
-
-	if(!is_station_level(z) || critical_machine)
-		return //Skip doors in critical positions, such as the SM chamber.
-
-	for(var/area_type in grey_tide_areas)
-		if(!istype(get_area(src), area_type))
-			continue
-		INVOKE_ASYNC(src, PROC_REF(prison_open)) //Sleep gets called further down in open(), so we have to invoke async
 
 /obj/machinery/airlock_sensor
 	icon = 'icons/obj/machines/wallmounts.dmi'

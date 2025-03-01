@@ -41,20 +41,25 @@
 
 /obj/item/paperwork/attackby(obj/item/attacking_item, mob/user, params)
 	. = ..()
+	if(.)
+		return
 
-	if(!stamped)
-		if(istype(attacking_item, /obj/item/stamp))
-			if(istype(attacking_item, stamp_requested)) //chameleon stamp does not work, this is a CRITICAL issue
-				add_stamp()
-				to_chat(user, span_notice("You skim through the papers until you find a field reading 'STAMP HERE', and complete the paperwork."))
-			else
-				if(istype(attacking_item, /obj/item/stamp/chameleon))
-					var/obj/item/stamp/chameleon/chameleon_stamp = attacking_item
-					to_chat(user, span_notice("[chameleon_stamp] morphs into the appropriate stamp, which you use to complete the paperwork."))
-					chameleon_stamp.chameleon_action.update_item(stamp_requested)
-					add_stamp()
-				else
-					to_chat(user, span_warning("You hunt through the papers for somewhere to use the [attacking_item], but can't find anything."))
+	if(stamped || !istype(attacking_item, /obj/item/stamp))
+		return
+
+	if(istype(attacking_item, stamp_requested))
+		add_stamp()
+		to_chat(user, span_notice("You skim through the papers until you find a field reading 'STAMP HERE', and complete the paperwork."))
+		return TRUE
+	var/datum/action/item_action/chameleon/change/stamp/stamp_action = locate() in attacking_item.actions
+	if(isnull(stamp_action))
+		to_chat(user, span_warning("You hunt through the papers for somewhere to use [attacking_item], but can't find anything."))
+		return TRUE
+
+	to_chat(user, span_notice("[attacking_item] morphs into the appropriate stamp, which you use to complete the paperwork."))
+	stamp_action.update_look(stamp_requested)
+	add_stamp()
+	return TRUE
 
 /obj/item/paperwork/examine_more(mob/user)
 	. = ..()
@@ -161,7 +166,7 @@
 
 	detailed_desc += span_info(" The stack of documents appear to be a medical report from a nearby station, detailing the autopsy of an unknown xenofauna.")
 	detailed_desc += span_info(" Skipping to the end of the report reveals that the specimen was the station bartender's pet monkey.")
-	detailed_desc += span_info(" The specimen had been exposed to radiation during an 'unrelated incident with the engine', leading to it's mutated form.")
+	detailed_desc += span_info(" The specimen had been exposed to radiation during an 'unrelated incident with the engine', leading to its mutated form.")
 	detailed_desc += span_info(" Regardless, the autopsy results look like they could be useful. You should probably stamp this.")
 
 

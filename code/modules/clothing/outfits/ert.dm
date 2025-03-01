@@ -1,8 +1,8 @@
 /datum/outfit/centcom
 	name = "CentCom Base"
 
-/datum/outfit/centcom/post_equip(mob/living/carbon/human/centcom_member, visualsOnly = FALSE)
-	if(visualsOnly)
+/datum/outfit/centcom/post_equip(mob/living/carbon/human/centcom_member, visuals_only = FALSE)
+	if(visuals_only)
 		return
 	var/obj/item/implant/mindshield/mindshield = new /obj/item/implant/mindshield(centcom_member)//hmm lets have centcom officials become revs
 	mindshield.implant(centcom_member, null, silent = TRUE)
@@ -17,8 +17,8 @@
 	shoes = /obj/item/clothing/shoes/combat/swat
 	var/additional_radio
 
-/datum/outfit/centcom/ert/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
-	if(visualsOnly)
+/datum/outfit/centcom/ert/post_equip(mob/living/carbon/human/H, visuals_only = FALSE)
+	if(visuals_only)
 		return
 
 	var/obj/item/radio/headset/R = H.ears
@@ -104,6 +104,8 @@
 	l_pocket = /obj/item/healthanalyzer/advanced
 	additional_radio = /obj/item/encryptionkey/heads/cmo
 
+	skillchips = list(/obj/item/skillchip/entrails_reader)
+
 /datum/outfit/centcom/ert/medic/alert
 	name = "ERT Medic - High Alert"
 
@@ -133,6 +135,9 @@
 	l_pocket = /obj/item/rcd_ammo/large
 	additional_radio = /obj/item/encryptionkey/heads/ce
 
+
+	skillchips = list(/obj/item/skillchip/job/engineer)
+
 /datum/outfit/centcom/ert/engineer/alert
 	name = "ERT Engineer - High Alert"
 
@@ -150,9 +155,9 @@
 	id_trim = /datum/id_trim/centcom/official
 	uniform = /obj/item/clothing/under/rank/centcom/official
 	back = /obj/item/storage/backpack/satchel
+	box = /obj/item/storage/box/survival
 	backpack_contents = list(
 		/obj/item/stamp/centcom = 1,
-		/obj/item/storage/box/survival = 1,
 	)
 	belt = /obj/item/gun/energy/e_gun
 	ears = /obj/item/radio/headset/headset_cent
@@ -163,13 +168,12 @@
 	r_pocket = /obj/item/modular_computer/pda/heads
 	l_hand = /obj/item/clipboard
 
-/datum/outfit/centcom/centcom_official/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
-	if(visualsOnly)
+/datum/outfit/centcom/centcom_official/post_equip(mob/living/carbon/human/H, visuals_only = FALSE)
+	if(visuals_only)
 		return
 
 	var/obj/item/modular_computer/pda/heads/pda = H.r_store
-	pda.saved_identification = H.real_name
-	pda.saved_job = "CentCom Official"
+	pda.imprint_id(H.real_name, "CentCom Official")
 
 	var/obj/item/card/id/W = H.wear_id
 	W.registered_name = H.real_name
@@ -182,9 +186,7 @@
 
 	back = /obj/item/mod/control/pre_equipped/responsory/inquisitory/commander
 	r_hand = /obj/item/nullrod/vibro/talking/chainsword
-	backpack_contents = list(
-		/obj/item/storage/box/survival = 1,
-	)
+	backpack_contents = null
 
 /datum/outfit/centcom/ert/security/inquisitor
 	name = "Inquisition Security"
@@ -245,7 +247,7 @@
 		/obj/item/storage/box/lights/mixed = 1,
 	)
 	belt = /obj/item/storage/belt/janitor/full
-	glasses = /obj/item/clothing/glasses/night
+	glasses = /obj/item/clothing/glasses/night/colorless
 	l_pocket = /obj/item/grenade/chem_grenade/cleaner
 	r_pocket = /obj/item/grenade/chem_grenade/cleaner
 	l_hand = /obj/item/storage/bag/trash/bluespace
@@ -280,9 +282,9 @@
 	r_pocket = /obj/item/bikehorn/golden
 	additional_radio = /obj/item/encryptionkey/heads/hop
 
-/datum/outfit/centcom/ert/clown/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+/datum/outfit/centcom/ert/clown/post_equip(mob/living/carbon/human/H, visuals_only = FALSE)
 	..()
-	if(visualsOnly)
+	if(visuals_only)
 		return
 	ADD_TRAIT(H.mind, TRAIT_NAIVE, INNATE_TRAIT)
 	H.dna.add_mutation(/datum/mutation/human/clumsy)
@@ -296,20 +298,18 @@
 	id_trim = /datum/id_trim/centcom/intern
 	uniform = /obj/item/clothing/under/rank/centcom/intern
 	back = /obj/item/storage/backpack/satchel
-	backpack_contents = list(
-		/obj/item/storage/box/survival = 1,
-	)
+	box = /obj/item/storage/box/survival
 	belt = /obj/item/melee/baton
 	ears = /obj/item/radio/headset/headset_cent
 	glasses = /obj/item/clothing/glasses/sunglasses
 	gloves = /obj/item/clothing/gloves/color/black
 	shoes = /obj/item/clothing/shoes/sneakers/black
-	l_pocket = /obj/item/ammo_box/a762
-	r_pocket = /obj/item/ammo_box/a762
+	l_pocket = /obj/item/ammo_box/strilka310
+	r_pocket = /obj/item/ammo_box/strilka310
 	l_hand = /obj/item/gun/ballistic/rifle/boltaction
 
-/datum/outfit/centcom/centcom_intern/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
-	if(visualsOnly)
+/datum/outfit/centcom/centcom_intern/post_equip(mob/living/carbon/human/H, visuals_only = FALSE)
+	if(visuals_only)
 		return
 
 	var/obj/item/card/id/W = H.wear_id
@@ -393,7 +393,7 @@
 	)
 	head = /obj/item/clothing/head/utility/hardhat/welding
 	mask = /obj/item/clothing/mask/gas/atmos
-	l_hand = /obj/item/areaeditor/blueprints
+	l_hand = /obj/item/blueprints
 
 /datum/outfit/centcom/ert/clown/party
 	name = "ERP Comedian"
@@ -447,15 +447,15 @@
 	mask = /obj/item/clothing/mask/gas/sechailer/swat
 	shoes = /obj/item/clothing/shoes/combat/swat
 	l_pocket = /obj/item/melee/energy/sword/saber
-	r_pocket = /obj/item/shield/energy
+	r_pocket = /obj/item/shield/energy/advanced
 	l_hand = /obj/item/gun/energy/pulse/loyalpin
 
 	skillchips = list(
 		/obj/item/skillchip/disk_verifier,
 	)
 
-/datum/outfit/centcom/death_commando/post_equip(mob/living/carbon/human/squaddie, visualsOnly = FALSE)
-	if(visualsOnly)
+/datum/outfit/centcom/death_commando/post_equip(mob/living/carbon/human/squaddie, visuals_only = FALSE)
+	if(visuals_only)
 		return
 
 	var/obj/item/radio/radio = squaddie.ears
@@ -472,15 +472,16 @@
 
 	back = /obj/item/mod/control/pre_equipped/apocryphal/officer
 
-/datum/outfit/centcom/death_commando/officer/post_equip(mob/living/carbon/human/squaddie, visualsOnly = FALSE)
+/datum/outfit/centcom/death_commando/officer/post_equip(mob/living/carbon/human/squaddie, visuals_only = FALSE)
 	. = ..()
 	var/obj/item/mod/control/mod = squaddie.back
 	if(!istype(mod))
 		return
-	var/obj/item/mod/module/hat_stabilizer/hat_holder = locate() in mod.modules
-	var/obj/item/clothing/head/helmet/space/beret/beret = new(hat_holder)
-	hat_holder.attached_hat = beret
-	squaddie.update_clothing(mod.slot_flags)
+	var/obj/item/clothing/helmet = mod.get_part_from_slot(ITEM_SLOT_HEAD)
+	var/obj/item/clothing/head/helmet/space/beret/beret = new(helmet)
+	var/datum/component/hat_stabilizer/component = helmet.GetComponent(/datum/component/hat_stabilizer)
+	component.attach_hat(beret)
+	squaddie.update_clothing(helmet.slot_flags)
 
 /datum/outfit/centcom/ert/marine
 	name = "Marine Commander"
@@ -525,6 +526,9 @@
 	glasses = /obj/item/clothing/glasses/hud/health/sunglasses
 	additional_radio = /obj/item/encryptionkey/heads/cmo
 
+
+	skillchips = list(/obj/item/skillchip/entrails_reader)
+
 /datum/outfit/centcom/ert/marine/engineer
 	name = "Marine Engineer"
 
@@ -538,6 +542,8 @@
 	glasses = /obj/item/clothing/glasses/hud/diagnostic/sunglasses
 	additional_radio = /obj/item/encryptionkey/heads/ce
 
+	skillchips = list(/obj/item/skillchip/job/engineer)
+
 /datum/outfit/centcom/militia
 	name = "Militia Man"
 
@@ -550,11 +556,11 @@
 	shoes = /obj/item/clothing/shoes/cowboy
 	gloves = /obj/item/clothing/gloves/combat
 	back = /obj/item/storage/backpack/satchel/leather
+	box = /obj/item/storage/box/survival
 	l_pocket = /obj/item/switchblade
 	r_pocket = /obj/item/reagent_containers/hypospray/medipen/salacid
 	ears = /obj/item/radio/headset
 	backpack_contents = list(
-			/obj/item/storage/box/survival = 1,
 			/obj/item/storage/medkit/emergency = 1,
 			/obj/item/crowbar = 1,
 			/obj/item/restraints/handcuffs = 1,
@@ -568,3 +574,72 @@
 	head = /obj/item/clothing/head/beret/militia
 	l_hand = /obj/item/megaphone
 	suit_store = /obj/item/gun/energy/laser/musket/prime
+
+/datum/outfit/centcom/ert/medical_commander
+	name = "Chief EMT"
+	id = /obj/item/card/id/advanced/centcom/ert/medical
+	uniform = /obj/item/clothing/under/rank/medical/chief_medical_officer
+	l_pocket = /obj/item/healthanalyzer/advanced
+	shoes = /obj/item/clothing/shoes/sneakers/white
+	backpack_contents = list(
+		/obj/item/reagent_containers/hypospray/combat = 1,
+		/obj/item/storage/medkit/regular = 1,
+		/obj/item/storage/medkit/advanced = 1,
+		/obj/item/melee/baton/telescopic = 1,
+		/obj/item/gun/energy/pulse/pistol/loyalpin = 1,
+		/obj/item/stack/medical/poultice = 1, //These stacks contain 15 by default. Great for getting corpses to defib range without surgery.
+	)
+	belt = /obj/item/storage/belt/medical/ert
+	glasses = /obj/item/clothing/glasses/hud/health/sunglasses
+	additional_radio = /obj/item/encryptionkey/heads/cmo
+	mask = /obj/item/clothing/mask/surgical
+	back = /obj/item/mod/control/pre_equipped/emergency_medical/corpsman
+	gloves = null
+	suit = null
+	head = null
+	suit_store = /obj/item/tank/internals/oxygen
+
+/datum/outfit/centcom/ert/medical_technician
+	name = "EMT Paramedic"
+	id = /obj/item/card/id/advanced/centcom/ert/medical
+	uniform = /obj/item/clothing/under/rank/medical/scrubs/blue
+	l_pocket = /obj/item/healthanalyzer
+	backpack_contents = list(
+		/obj/item/reagent_containers/hypospray/combat = 1,
+		/obj/item/storage/medkit/regular = 1,
+		/obj/item/reagent_containers/syringe = 1,
+		/obj/item/reagent_containers/cup/bottle/formaldehyde = 1,
+		/obj/item/reagent_containers/medigel/sterilizine = 1,
+		/obj/item/bodybag = 2,
+	)
+	mask = /obj/item/clothing/mask/surgical
+	belt = /obj/item/storage/belt/medical/ert
+	glasses = /obj/item/clothing/glasses/hud/health
+	additional_radio = /obj/item/encryptionkey/heads/cmo
+	shoes = /obj/item/clothing/shoes/sneakers/blue
+	back = /obj/item/mod/control/pre_equipped/emergency_medical
+	gloves = null
+	suit = null
+	head = null
+	suit_store = /obj/item/tank/internals/oxygen
+
+/obj/item/mod/control/pre_equipped/emergency_medical
+	theme = /datum/mod_theme/medical
+	starting_frequency = MODLINK_FREQ_CENTCOM
+	applied_cell = /obj/item/stock_parts/power_store/cell/hyper
+	applied_modules = list(
+		/obj/item/mod/module/organizer,
+		/obj/item/mod/module/defibrillator,
+		/obj/item/mod/module/flashlight,
+		/obj/item/mod/module/health_analyzer,
+		/obj/item/mod/module/injector,
+		/obj/item/mod/module/surgical_processor/emergency,
+		/obj/item/mod/module/storage/large_capacity,
+	)
+
+/obj/item/mod/control/pre_equipped/emergency_medical/corpsman
+	theme = /datum/mod_theme/medical/corpsman
+
+///Identical to medical MODsuit, but uses the alternate skin by default.
+/datum/mod_theme/medical/corpsman
+	default_skin = "corpsman"

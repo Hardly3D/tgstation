@@ -43,11 +43,11 @@
 	GLOB.requests.pray(usr.client, msg, usr.job == JOB_CHAPLAIN)
 	msg = span_adminnotice("[icon2html(cross, GLOB.admins)]<b><font color=[font_color]>[prayer_type][deity ? " (to [deity])" : ""]: </font>[ADMIN_FULLMONTY(src)] [ADMIN_SC(src)]:</b> [span_linkify(msg)]")
 	for(var/client/C in GLOB.admins)
-		if(C.prefs.chat_toggles & CHAT_PRAYER)
+		if(get_chat_toggles(C) & CHAT_PRAYER)
 			to_chat(C, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
 	to_chat(usr, span_info("You pray to the gods: \"[msg_tmp]\""), confidential = TRUE)
 
-	SSblackbox.record_feedback("tally", "admin_verb", 1, "Prayer") // If you are copy-pasting this, ensure the 4th parameter is unique to the new proc!
+	BLACKBOX_LOG_ADMIN_VERB("Prayer")
 
 
 /// Used by communications consoles to message CentCom
@@ -58,7 +58,7 @@
 	for(var/client/staff as anything in GLOB.admins)
 		if(staff?.prefs.read_preference(/datum/preference/toggle/comms_notification))
 			SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, confidential = TRUE)
+	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()
 
@@ -70,7 +70,7 @@
 	for(var/client/staff as anything in GLOB.admins)
 		if(staff?.prefs.read_preference(/datum/preference/toggle/comms_notification))
 			SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, confidential = TRUE)
+	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()
 
@@ -81,6 +81,6 @@
 	msg = span_adminnotice("<b><font color=orange>NUKE CODE REQUEST:</font>[ADMIN_FULLMONTY(sender)] [ADMIN_CENTCOM_REPLY(sender)] [ADMIN_SET_SD_CODE]:</b> [msg]")
 	for(var/client/staff as anything in GLOB.admins)
 		SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, confidential = TRUE)
+	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()

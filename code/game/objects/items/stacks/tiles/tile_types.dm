@@ -26,16 +26,18 @@
 	var/list/tile_reskin_types
 	/// Cached associative lazy list to hold the radial options for tile dirs. See tile_reskinning.dm for more information.
 	var/list/tile_rotate_dirs
-	/// Allows us to replace the plating we are attacking if our baseturfs are the same.
-	var/replace_plating = FALSE
+	/// tile_rotate_dirs but before it gets converted to text
+	var/list/tile_rotate_dirs_number
 
 /obj/item/stack/tile/Initialize(mapload, new_amount, merge = TRUE, list/mat_override=null, mat_amt=1)
 	. = ..()
 	pixel_x = rand(-3, 3)
 	pixel_y = rand(-3, 3) //randomize a little
+	AddElement(/datum/element/openspace_item_click_handler)
 	if(tile_reskin_types)
 		tile_reskin_types = tile_reskin_list(tile_reskin_types)
 	if(tile_rotate_dirs)
+		tile_rotate_dirs_number = tile_rotate_dirs.Copy()
 		var/list/values = list()
 		for(var/set_dir in tile_rotate_dirs)
 			values += dir2text(set_dir)
@@ -47,27 +49,27 @@
 	if(tile_reskin_types || tile_rotate_dirs)
 		. += span_notice("Use while in your hand to change what type of [src] you want.")
 	if(throwforce && !is_cyborg) //do not want to divide by zero or show the message to borgs who can't throw
-		var/verb
+		var/damage_value
 		switch(CEILING(MAX_LIVING_HEALTH / throwforce, 1)) //throws to crit a human
 			if(1 to 3)
-				verb = "superb"
+				damage_value = "superb"
 			if(4 to 6)
-				verb = "great"
+				damage_value = "great"
 			if(7 to 9)
-				verb = "good"
+				damage_value = "good"
 			if(10 to 12)
-				verb = "fairly decent"
+				damage_value = "fairly decent"
 			if(13 to 15)
-				verb = "mediocre"
-		if(!verb)
+				damage_value = "mediocre"
+		if(!damage_value)
 			return
-		. += span_notice("Those could work as a [verb] throwing weapon.")
+		. += span_notice("Those could work as a [damage_value] throwing weapon.")
 
 /**
  * Place our tile on a plating, or replace it.
  *
  * Arguments:
- * * target_plating - Instance of the plating we want to place on. Replaced during sucessful executions.
+ * * target_plating - Instance of the plating we want to place on. Replaced during successful executions.
  * * user - The mob doing the placing.
  */
 /obj/item/stack/tile/proc/place_tile(turf/open/floor/plating/target_plating, mob/user)
@@ -77,28 +79,15 @@
 	if(!istype(target_plating))
 		return
 
-	if(!replace_plating)
-		if(!use(1))
-			return
-		target_plating = target_plating.PlaceOnTop(placed_turf_path, flags = CHANGETURF_INHERIT_AIR)
-		target_plating.setDir(turf_dir)
-		playsound(target_plating, 'sound/weapons/genhit.ogg', 50, TRUE)
-		return target_plating // Most executions should end here.
-
-	// If we and the target tile share the same initial baseturf and they consent, replace em.
-	if(!target_plating.allow_replacement || initial(target_plating.baseturfs) != initial(placed_turf_path.baseturfs))
-		to_chat(user, span_notice("You cannot place this tile here directly!"))
-		return
-	to_chat(user, span_notice("You begin replacing the floor with the tile..."))
-	if(!istype(target_plating))
-		return
 	if(!use(1))
 		return
-
-	target_plating = target_plating.ChangeTurf(placed_turf_path, target_plating.baseturfs, CHANGETURF_INHERIT_AIR)
+	target_plating = target_plating.place_on_top(placed_turf_path, flags = CHANGETURF_INHERIT_AIR)
 	target_plating.setDir(turf_dir)
-	playsound(target_plating, 'sound/weapons/genhit.ogg', 50, TRUE)
+	playsound(target_plating, 'sound/items/weapons/genhit.ogg', 50, TRUE)
 	return target_plating
+
+/obj/item/stack/tile/handle_openspace_click(turf/target, mob/user, list/modifiers)
+	target.attackby(src, user, list2params(modifiers))
 
 //Grass
 /obj/item/stack/tile/grass
@@ -110,6 +99,17 @@
 	turf_type = /turf/open/floor/grass
 	resistance_flags = FLAMMABLE
 	merge_type = /obj/item/stack/tile/grass
+
+//Hay
+/obj/item/stack/tile/hay
+	name = "hay tile"
+	singular_name = "hay floor tile"
+	desc = "Man, I'm so hungry I could eat a-"
+	icon_state = "tile_hay"
+	inhand_icon_state = "tile-hay"
+	turf_type = /turf/open/floor/hay
+	resistance_flags = FLAMMABLE
+	merge_type = /obj/item/stack/tile/hay
 
 //Fairygrass
 /obj/item/stack/tile/fairygrass
@@ -249,6 +249,7 @@
 	turf_type = /turf/open/floor/carpet/black
 	tableVariant = /obj/structure/table/wood/fancy/black
 	merge_type = /obj/item/stack/tile/carpet/black
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/blue
 	name = "blue carpet"
@@ -257,6 +258,7 @@
 	turf_type = /turf/open/floor/carpet/blue
 	tableVariant = /obj/structure/table/wood/fancy/blue
 	merge_type = /obj/item/stack/tile/carpet/blue
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/cyan
 	name = "cyan carpet"
@@ -265,6 +267,7 @@
 	turf_type = /turf/open/floor/carpet/cyan
 	tableVariant = /obj/structure/table/wood/fancy/cyan
 	merge_type = /obj/item/stack/tile/carpet/cyan
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/green
 	name = "green carpet"
@@ -273,6 +276,7 @@
 	turf_type = /turf/open/floor/carpet/green
 	tableVariant = /obj/structure/table/wood/fancy/green
 	merge_type = /obj/item/stack/tile/carpet/green
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/orange
 	name = "orange carpet"
@@ -281,6 +285,7 @@
 	turf_type = /turf/open/floor/carpet/orange
 	tableVariant = /obj/structure/table/wood/fancy/orange
 	merge_type = /obj/item/stack/tile/carpet/orange
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/purple
 	name = "purple carpet"
@@ -289,6 +294,7 @@
 	turf_type = /turf/open/floor/carpet/purple
 	tableVariant = /obj/structure/table/wood/fancy/purple
 	merge_type = /obj/item/stack/tile/carpet/purple
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/red
 	name = "red carpet"
@@ -297,6 +303,7 @@
 	turf_type = /turf/open/floor/carpet/red
 	tableVariant = /obj/structure/table/wood/fancy/red
 	merge_type = /obj/item/stack/tile/carpet/red
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/royalblack
 	name = "royal black carpet"
@@ -305,6 +312,7 @@
 	turf_type = /turf/open/floor/carpet/royalblack
 	tableVariant = /obj/structure/table/wood/fancy/royalblack
 	merge_type = /obj/item/stack/tile/carpet/royalblack
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/royalblue
 	name = "royal blue carpet"
@@ -313,6 +321,7 @@
 	turf_type = /turf/open/floor/carpet/royalblue
 	tableVariant = /obj/structure/table/wood/fancy/royalblue
 	merge_type = /obj/item/stack/tile/carpet/royalblue
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/executive
 	name = "executive carpet"
@@ -320,6 +329,7 @@
 	inhand_icon_state = "tile-carpet-royalblue"
 	turf_type = /turf/open/floor/carpet/executive
 	merge_type = /obj/item/stack/tile/carpet/executive
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/stellar
 	name = "stellar carpet"
@@ -327,6 +337,7 @@
 	inhand_icon_state = "tile-carpet-royalblue"
 	turf_type = /turf/open/floor/carpet/stellar
 	merge_type = /obj/item/stack/tile/carpet/stellar
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/donk
 	name = "\improper Donk Co. promotional carpet"
@@ -334,8 +345,12 @@
 	inhand_icon_state = "tile-carpet-orange"
 	turf_type = /turf/open/floor/carpet/donk
 	merge_type = /obj/item/stack/tile/carpet/donk
+	tile_reskin_types = null
 
 /obj/item/stack/tile/carpet/fifty
+	amount = 50
+
+/obj/item/stack/tile/iron/fifty
 	amount = 50
 
 /obj/item/stack/tile/carpet/black/fifty
@@ -381,6 +396,8 @@
 	inhand_icon_state = "tile-neon"
 	turf_type = /turf/open/floor/carpet/neon
 	merge_type = /obj/item/stack/tile/carpet/neon
+	tile_reskin_types = null
+
 
 	// Neon overlay
 	/// The icon used for the neon overlay and emissive overlay.
@@ -1030,23 +1047,23 @@
 	turf_type = /turf/open/floor/noslip/tram
 	merge_type = /obj/item/stack/tile/noslip/tram
 
-/obj/item/stack/tile/noslip/tram_platform
+/obj/item/stack/tile/tram
 	name = "tram platform tiles"
 	singular_name = "tram platform"
 	desc = "A tile used for tram platforms."
 	icon_state = "darkiron_catwalk"
 	inhand_icon_state = "tile-neon"
-	turf_type = /turf/open/floor/noslip/tram_platform
-	merge_type = /obj/item/stack/tile/noslip/tram_platform
+	turf_type = /turf/open/floor/tram
+	merge_type = /obj/item/stack/tile/tram
 
-/obj/item/stack/tile/noslip/tram_plate
-	name = "high-traction platform tile"
-	singular_name = "high-traction platform tile"
-	desc = "A high-traction tile used for tram platforms."
+/obj/item/stack/tile/tram/plate
+	name = "linear induction tram tiles"
+	singular_name = "linear induction tram tile"
+	desc = "A tile with an aluminium plate for tram propulsion."
 	icon_state = "darkiron_plate"
 	inhand_icon_state = "tile-neon"
-	turf_type = /turf/open/floor/noslip/tram_plate
-	merge_type = /obj/item/stack/tile/noslip/tram_plate
+	turf_type = /turf/open/floor/tram/plate
+	merge_type = /obj/item/stack/tile/tram/plate
 
 //Circuit
 /obj/item/stack/tile/circuit
@@ -1057,6 +1074,11 @@
 	inhand_icon_state = "tile-bcircuit"
 	turf_type = /turf/open/floor/circuit
 	merge_type = /obj/item/stack/tile/circuit
+	tile_reskin_types = list(
+		/obj/item/stack/tile/circuit,
+		/obj/item/stack/tile/circuit/green,
+		/obj/item/stack/tile/circuit/red,
+	)
 
 /obj/item/stack/tile/circuit/green
 	name = "green circuit tile"
@@ -1130,6 +1152,7 @@
 	desc = "The ground you walk on."
 	throwforce = 10
 	icon_state = "material_tile"
+	inhand_icon_state = "tile"
 	turf_type = /turf/open/floor/material
 	material_flags = MATERIAL_EFFECTS | MATERIAL_ADD_PREFIX | MATERIAL_COLOR | MATERIAL_AFFECT_STATISTICS
 	merge_type = /obj/item/stack/tile/material
@@ -1236,13 +1259,12 @@
 	inhand_icon_state = "tile-catwalk"
 	mats_per_unit = list(/datum/material/iron=SMALL_MATERIAL_AMOUNT)
 	turf_type = /turf/open/floor/catwalk_floor
-	merge_type = /obj/item/stack/tile/catwalk_tile //Just to be cleaner, these all stack with eachother
+	merge_type = /obj/item/stack/tile/catwalk_tile //Just to be cleaner, these all stack with each other
 	tile_reskin_types = list(
 		/obj/item/stack/tile/catwalk_tile,
 		/obj/item/stack/tile/catwalk_tile/iron,
 		/obj/item/stack/tile/catwalk_tile/iron_white,
 		/obj/item/stack/tile/catwalk_tile/iron_dark,
-		/obj/item/stack/tile/catwalk_tile/flat_white,
 		/obj/item/stack/tile/catwalk_tile/titanium,
 		/obj/item/stack/tile/catwalk_tile/iron_smooth //this is the original greenish one
 	)
@@ -1268,12 +1290,6 @@
 	icon_state = "darkiron_catwalk"
 	turf_type = /turf/open/floor/catwalk_floor/iron_dark
 
-/obj/item/stack/tile/catwalk_tile/flat_white
-	name = "flat white catwalk floor"
-	singular_name = "flat white catwalk floor tile"
-	icon_state = "flatwhite_catwalk"
-	turf_type = /turf/open/floor/catwalk_floor/flat_white
-
 /obj/item/stack/tile/catwalk_tile/titanium
 	name = "titanium catwalk floor"
 	singular_name = "titanium catwalk floor tile"
@@ -1296,7 +1312,6 @@
 	inhand_icon_state = "tile-glass"
 	merge_type = /obj/item/stack/tile/glass
 	mats_per_unit = list(/datum/material/glass=SHEET_MATERIAL_AMOUNT * 0.25) // 4 tiles per sheet
-	replace_plating = TRUE
 
 /obj/item/stack/tile/glass/sixty
 	amount = 60
@@ -1310,7 +1325,6 @@
 	turf_type = /turf/open/floor/glass/reinforced
 	merge_type = /obj/item/stack/tile/rglass
 	mats_per_unit = list(/datum/material/iron=SHEET_MATERIAL_AMOUNT * 0.125, /datum/material/glass=SHEET_MATERIAL_AMOUNT * 0.25) // 4 tiles per sheet
-	replace_plating = TRUE
 
 /obj/item/stack/tile/rglass/sixty
 	amount = 60

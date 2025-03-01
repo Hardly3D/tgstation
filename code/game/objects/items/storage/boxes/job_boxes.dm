@@ -14,6 +14,10 @@
 	var/medipen_type = /obj/item/reagent_containers/hypospray/medipen
 	/// Are we crafted?
 	var/crafted = FALSE
+	/// Should we contain an escape hook on maps with z-levels?
+	var/give_hook = TRUE
+	/// Do we get to benefit from Nanotrasen's largesse?
+	var/give_premium_goods = TRUE
 
 /obj/item/storage/box/survival/Initialize(mapload)
 	. = ..()
@@ -30,20 +34,21 @@
 	if(!isnull(mask_type))
 		new mask_type(src)
 
-	if(!isplasmaman(loc))
+	if(!isnull(internal_type))
 		new internal_type(src)
-	else
-		new /obj/item/tank/internals/plasmaman/belt(src)
 
 	if(!isnull(medipen_type))
 		new medipen_type(src)
 
-	if(HAS_TRAIT(SSstation, STATION_TRAIT_PREMIUM_INTERNALS))
+	if(give_premium_goods && HAS_TRAIT(SSstation, STATION_TRAIT_PREMIUM_INTERNALS))
 		new /obj/item/flashlight/flare(src)
 		new /obj/item/radio/off(src)
 
 	if(HAS_TRAIT(SSstation, STATION_TRAIT_RADIOACTIVE_NEBULA))
 		new /obj/item/storage/pill_bottle/potassiodide(src)
+
+	if(give_hook && length(SSmapping.levels_by_trait(ZTRAIT_STATION)) > 1)
+		new /obj/item/climbing_hook/emergency(src)
 
 /obj/item/storage/box/survival/radio/PopulateContents()
 	..() // we want the survival stuff too.
@@ -57,6 +62,11 @@
 	new /obj/item/tank/internals/plasmaman/belt(src)
 	qdel(mask) // Get rid of the items that shouldn't be
 	qdel(internals)
+
+// Prisoners don't get an escape hook
+/obj/item/storage/box/survival/prisoner
+	give_hook = FALSE
+	give_premium_goods = FALSE
 
 // Mining survival box
 /obj/item/storage/box/survival/mining
@@ -90,28 +100,10 @@
 
 /obj/item/storage/box/survival/syndie/PopulateContents()
 	..()
-	new /obj/item/tool_parcel(src)
+	new /obj/item/crowbar/red(src)
+	new /obj/item/screwdriver/red(src)
+	new /obj/item/weldingtool/mini(src)
 	new /obj/item/paper/fluff/operative(src)
-
-/obj/item/tool_parcel
-	name = "operative toolkit care package"
-	desc = "A small parcel. It contains a few items every operative needs."
-	w_class =  WEIGHT_CLASS_SMALL
-	icon = 'icons/obj/storage/wrapping.dmi'
-	icon_state = "deliverypackage2"
-
-/obj/item/tool_parcel/attack_self(mob/user)
-	. = ..()
-	new /obj/item/crowbar/red(get_turf(user))
-	new /obj/item/screwdriver/red(get_turf(user))
-	new /obj/item/weldingtool/mini(get_turf(user))
-	new /obj/effect/decal/cleanable/wrapping(get_turf(user))
-	if(prob(5))
-		new /obj/item/storage/fancy/cigarettes/cigpack_syndicate(get_turf(user))
-		new /obj/item/lighter(get_turf(user))
-		to_chat(user, span_notice("...oh, someone left some cigarettes in here."))
-	playsound(loc, 'sound/items/poster_ripped.ogg', 20, TRUE)
-	qdel(src)
 
 /obj/item/storage/box/survival/centcom
 	name = "emergency response survival box"
@@ -188,20 +180,20 @@
 	desc = "A colorful cardboard box for the clown"
 	illustration = "clown"
 
-/obj/item/storage/box/clown/attackby(obj/item/I, mob/user, params)
-	if((istype(I, /obj/item/bodypart/arm/left/robot)) || (istype(I, /obj/item/bodypart/arm/right/robot)))
-		if(contents.len) //prevent accidently deleting contents
-			balloon_alert(user, "items inside!")
-			return
-		if(!user.temporarilyRemoveItemFromInventory(I))
-			return
-		qdel(I)
-		balloon_alert(user, "wheels added, honk!")
-		var/obj/item/bot_assembly/honkbot/A = new
-		qdel(src)
-		user.put_in_hands(A)
-	else
+/obj/item/storage/box/clown/tool_act(mob/living/user, obj/item/tool, list/modifiers)
+	if(!istype(tool, /obj/item/bodypart/arm/left/robot) && !istype(tool, /obj/item/bodypart/arm/right/robot))
 		return ..()
+	if(contents.len) //prevent accidently deleting contents
+		balloon_alert(user, "items inside!")
+		return ITEM_INTERACT_BLOCKING
+	if(!user.temporarilyRemoveItemFromInventory(tool))
+		return ITEM_INTERACT_BLOCKING
+	qdel(tool)
+	loc.balloon_alert(user, "wheels added, honk!")
+	var/obj/item/bot_assembly/honkbot/A = new
+	qdel(src)
+	user.put_in_hands(A)
+	return ITEM_INTERACT_SUCCESS
 
 /obj/item/storage/box/clown/suicide_act(mob/living/user)
 	user.visible_message(span_suicide("[user] opens [src] and gets consumed by [p_them()]! It looks like [user.p_theyre()] trying to commit suicide!"))
@@ -225,11 +217,23 @@
 	illustration = "heart"
 	foldable_result = null
 	mask_type = null
+	var/random_funny_internals = TRUE
+
+/obj/item/storage/box/survival/hug/PopulateContents()
+	if(!random_funny_internals)
+		return ..()
+	internal_type = pick(
+			/obj/item/tank/internals/emergency_oxygen/engi/clown/n2o,
+			/obj/item/tank/internals/emergency_oxygen/engi/clown/bz,
+			/obj/item/tank/internals/emergency_oxygen/engi/clown/helium,
+			)
+	return ..()
 
 //Mime survival box
 /obj/item/storage/box/survival/hug/black
 	icon_state = "hugbox_black"
 	illustration = "heart_black"
+	random_funny_internals = FALSE
 
 //Duplicated suicide/attack self procs, since the survival boxes are a subtype of box/survival
 /obj/item/storage/box/survival/hug/suicide_act(mob/living/user)

@@ -9,11 +9,13 @@
 	material_drop_amount = 4
 	delivery_icon = "deliverybox"
 	integrity_failure = 0 //Makes the crate break when integrity reaches 0, instead of opening and becoming an invisible sprite.
-	open_sound = 'sound/machines/wooden_closet_open.ogg'
-	close_sound = 'sound/machines/wooden_closet_close.ogg'
+	open_sound = 'sound/machines/closet/wooden_closet_open.ogg'
+	close_sound = 'sound/machines/closet/wooden_closet_close.ogg'
 	open_sound_volume = 25
 	close_sound_volume = 50
 	can_install_electronics = FALSE
+	elevation = 22
+	can_weld_shut = FALSE
 
 	// Stops people from "diving into" a crate you can't open normally
 	divable = FALSE
@@ -38,7 +40,7 @@
 		user.visible_message(span_notice("[user] pries \the [src] open."), \
 			span_notice("You pry open \the [src]."), \
 			span_hear("You hear splitting wood."))
-		playsound(src.loc, 'sound/weapons/slashmiss.ogg', 75, TRUE)
+		playsound(src.loc, 'sound/items/weapons/slashmiss.ogg', 75, TRUE)
 
 		var/turf/T = get_turf(src)
 		for(var/i in 1 to material_drop_amount)
@@ -55,3 +57,16 @@
 			to_chat(user, span_warning("You need a crowbar to pry this open!"))
 			return FALSE //Just stop. Do nothing. Don't turn into an invisible sprite. Don't open like a locker.
 					//The large crate has no non-attack interactions other than the crowbar, anyway.
+
+/obj/structure/closet/crate/large/hats/PopulateContents()
+	..()
+	for (var/i in 1 to 5)
+		new /obj/effect/spawner/random/clothing/funny_hats(src)
+	if(prob(1))
+		var/our_contents = list()
+		for(var/obj/item/clothing/head/any_hat in contents)
+			our_contents[any_hat]++
+		if(our_contents)
+			var/obj/item/clothing/head/lucky_hat = pick(our_contents)
+			lucky_hat.AddComponent(/datum/component/unusual_effect, color = "#FFEA0030", include_particles = TRUE)
+			lucky_hat.name = "unusual [name]"

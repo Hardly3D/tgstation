@@ -4,7 +4,14 @@
 	inhand_icon_state = "flashbang"
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/security_righthand.dmi'
+	possible_fuse_time = list("3", "4", "5")
 	var/flashbang_range = 7 //how many tiles away the mob will be stunned.
+
+/obj/item/grenade/flashbang/apply_grenade_fantasy_bonuses(quality)
+	flashbang_range = modify_fantasy_variable("flashbang_range", flashbang_range, quality)
+
+/obj/item/grenade/flashbang/remove_grenade_fantasy_bonuses(quality)
+	flashbang_range = reset_fantasy_variable("flashbang_range", flashbang_range)
 
 /obj/item/grenade/flashbang/detonate(mob/living/lanced_by)
 	. = ..()
@@ -16,7 +23,7 @@
 	if(!flashbang_turf)
 		return
 	do_sparks(rand(5, 9), FALSE, src)
-	playsound(flashbang_turf, 'sound/weapons/flashbang.ogg', 100, TRUE, 8, 0.9)
+	playsound(flashbang_turf, 'sound/items/weapons/flashbang.ogg', 100, TRUE, 8, 0.9)
 	new /obj/effect/dummy/lighting_obj (flashbang_turf, flashbang_range + 2, 4, COLOR_WHITE, 2)
 	for(var/mob/living/living_mob in get_hearers_in_view(flashbang_range, flashbang_turf))
 		bang(get_turf(living_mob), living_mob)
@@ -46,7 +53,8 @@
 
 /obj/item/grenade/stingbang
 	name = "stingbang"
-	icon_state = "timeg"
+	icon_state = "timeg_locked"
+	base_icon_state = "timeg"
 	inhand_icon_state = "flashbang"
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/security_righthand.dmi'
@@ -57,6 +65,8 @@
 
 /obj/item/grenade/stingbang/mega
 	name = "mega stingbang"
+	icon_state = "timeg_mega_locked"
+	base_icon_state = "timeg_mega"
 	shrapnel_type = /obj/projectile/bullet/pellet/stingball/mega
 	shrapnel_radius = 12
 
@@ -84,7 +94,7 @@
 	if(!flashbang_turf)
 		return
 	do_sparks(rand(5, 9), FALSE, src)
-	playsound(flashbang_turf, 'sound/weapons/flashbang.ogg', 50, TRUE, 8, 0.9)
+	playsound(flashbang_turf, 'sound/items/weapons/flashbang.ogg', 50, TRUE, 8, 0.9)
 	new /obj/effect/dummy/lighting_obj (flashbang_turf, flashbang_range + 2, 2, COLOR_WHITE, 1)
 	for(var/mob/living/living_mob in get_hearers_in_view(flashbang_range, flashbang_turf))
 		pop(get_turf(living_mob), living_mob)
@@ -105,7 +115,7 @@
 		living_mob.Paralyze(20)
 		living_mob.Knockdown(200)
 		living_mob.soundbang_act(1, 200, 10, 15)
-		if(living_mob.apply_damages(10, 10))
+		if(living_mob.apply_damages(brute = 10, burn = 10))
 			to_chat(living_mob, span_userdanger("The blast from \the [src] bruises and burns you!"))
 
 	// only checking if they're on top of the tile, cause being one tile over will be its own punishment
@@ -114,7 +124,8 @@
 /obj/item/grenade/primer
 	name = "rotfrag grenade"
 	desc = "A grenade that generates more shrapnel the more you rotate it in your hand after pulling the pin. This one releases shrapnel shards."
-	icon_state = "timeg"
+	icon_state = "timeg_locked"
+	base_icon_state = "timeg"
 	inhand_icon_state = "flashbang"
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/security_righthand.dmi'

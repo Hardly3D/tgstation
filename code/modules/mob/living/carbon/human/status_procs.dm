@@ -3,7 +3,7 @@
 	amount = dna.species.spec_stun(src, amount)
 	return ..()
 
-/mob/living/carbon/human/Knockdown(amount, ignore_canstun = FALSE)
+/mob/living/carbon/human/Knockdown(amount, daze_amount = 0, ignore_canstun = FALSE)
 	amount = dna.species.spec_stun(src, amount) * physiology.knockdown_mod
 	return ..()
 
@@ -27,14 +27,6 @@
 	return ..()
 
 /mob/living/carbon/human/cure_husk(list/sources)
-	. = ..()
-	if(.)
-		update_body_parts()
-
-/mob/living/carbon/human/become_husk(source)
-	if(istype(dna.species, /datum/species/skeleton)) //skeletons shouldn't be husks.
-		cure_husk()
-		return
 	. = ..()
 	if(.)
 		update_body_parts()
