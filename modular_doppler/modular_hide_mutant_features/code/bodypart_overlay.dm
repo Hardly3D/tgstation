@@ -22,7 +22,7 @@
 // Chest/Bottom
 
 /datum/bodypart_overlay/mutant/proc/can_draw_on_chest(var/mob/living/carbon/human/wearer, key)
-	if(!istype(wearer) || !wearer.w_uniform && !wearer.wear_suit)
+	if(!istype(wearer) || (!wearer.w_uniform && !wearer.wear_suit))
 		return TRUE
 
 	// Hide if wearing uniform
