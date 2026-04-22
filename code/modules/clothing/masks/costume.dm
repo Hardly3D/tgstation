@@ -54,6 +54,7 @@
 	inhand_icon_state = null
 	w_class = WEIGHT_CLASS_SMALL
 	adjusted_flags = ITEM_SLOT_HEAD
+	alternate_worn_layer = ABOVE_BODY_FRONT_HEAD_LAYER
 	flags_inv = HIDEFACE|HIDEFACIALHAIR
 	custom_price = PAYCHECK_CREW
 	greyscale_colors = "#EEEEEE#AA0000"
@@ -74,7 +75,6 @@
 
 /obj/item/clothing/mask/kitsune/attack_self(mob/user)
 	adjust_visor(user)
-	alternate_worn_layer = up ? NONE : ABOVE_BODY_FRONT_HEAD_LAYER
 	flags_inv = up ? NONE : (HIDEFACE|HIDEFACIALHAIR)
 
 /obj/item/clothing/mask/rebellion
