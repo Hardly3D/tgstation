@@ -150,6 +150,10 @@
 		if(!isliving(thrower))
 			return
 		toss_gun_hard(thrower, hit_atom)
+	// DOPPLER ADDITION START - Gun safety malfunction
+	if(prob(GUN_NO_SAFETY_MALFUNCTION_CHANCE_HIGH))
+		discharge("hits the ground hard")
+	// DOPPLER ADDITION END
 
 /obj/item/gun/proc/toss_gun_hard(mob/living/thrower, mob/living/target) //throw a gun at them. They don't expect it.
 	if(isnull(thrower))
@@ -192,12 +196,23 @@
 //check if there's enough ammo/energy/whatever to shoot one time
 //i.e if clicking would make it shoot
 /obj/item/gun/proc/can_shoot()
+	// DOPPLER ADDITION START - Gun safety
+	if(safety)
+		return FALSE
+	// DOPPLER EDIT END
 	return TRUE
 
 /obj/item/gun/proc/tk_firing(mob/living/user)
 	return !user.contains(src) && !istype(loc, /obj/vehicle/ridden/mounted_turret)// DOPPLER EDIT - MOUNTED GUN FIRE MESSAGES - return !user.contains(src)
 
 /obj/item/gun/proc/shoot_with_empty_chamber(mob/living/user as mob|obj)
+	// DOPPLER ADDITION START - Gun safety
+	if(!safety)
+		to_chat(user, span_danger("*[dry_fire_text]*"))
+		playsound(src, dry_fire_sound, 30, TRUE)
+		return
+	to_chat(user, span_danger("Safeties are active on the [src]! Turn them off to fire!"))
+	// DOPPLER ADDITION END
 	balloon_alert_to_viewers("*click*")
 	playsound(src, dry_fire_sound, dry_fire_sound_volume, TRUE)
 

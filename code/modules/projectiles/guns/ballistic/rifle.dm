@@ -38,6 +38,10 @@
 	return ..()
 
 /obj/item/gun/ballistic/rifle/can_shoot()
+	// DOPPLER ADDITION START - Gun safety
+	if(safety)
+		return FALSE
+	// DOPPLER EDIT END
 	if (bolt_locked)
 		return FALSE
 	return ..()

@@ -188,7 +188,11 @@
 	if(ammo_type.len > 1 && can_select)
 		select_fire(user)
 
-/obj/item/gun/energy/can_shoot()
+/obj/item/gun/energy/can_shoot(visuals) // DOPLER EDIT - Visuals param. Original: /obj/item/gun/energy/can_shoot()
+	// DOPPLER ADDITION START - Gun safety
+	if(safety && !visuals)
+		return FALSE
+	// DOPPER ADDITION END
 	var/obj/item/ammo_casing/energy/shot = ammo_type[select]
 	return !QDELETED(cell) ? (cell.charge >= shot.e_cost) : FALSE
 
@@ -295,7 +299,7 @@
 
 ///Used by update_icon_state() and update_overlays()
 /obj/item/gun/energy/proc/get_charge_ratio()
-	return can_shoot() ? CEILING(clamp(cell.charge / cell.maxcharge, 0, 1) * charge_sections, 1) : 0
+	return can_shoot(visuals = TRUE) ? CEILING(clamp(cell.charge / cell.maxcharge, 0, 1) * charge_sections, 1) : 0 // DOPPLER EDIT - Visuals param for gun safety. Original: return can_shoot() ? CEILING(clamp(cell.charge / cell.maxcharge, 0, 1) * charge_sections, 1) : 0
 	// Sets the ratio to 0 if the gun doesn't have enough charge to fire, or if its power cell is removed.
 
 /obj/item/gun/energy/suicide_act(mob/living/user)

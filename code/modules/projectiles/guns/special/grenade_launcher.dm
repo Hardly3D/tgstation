@@ -38,6 +38,10 @@
 			balloon_alert(user, "it's already full!")
 
 /obj/item/gun/grenadelauncher/can_shoot()
+	// DOPPLER ADDITION START - Gun safety
+	if(safety)
+		return FALSE
+	// DOPPLER EDIT END
 	return grenades.len
 
 /obj/item/gun/grenadelauncher/process_fire(atom/target, mob/living/user, message = TRUE, params = null, zone_override = "", bonus_spread = 0)

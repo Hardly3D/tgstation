@@ -509,6 +509,10 @@
 	update_appearance()
 
 /obj/item/gun/ballistic/can_shoot()
+	// DOPPLER ADDITION START - Gun safety
+	if(safety)
+		return FALSE
+	// DOPPLER EDIT END
 	return chambered?.loaded_projectile
 
 /obj/item/gun/ballistic/item_interaction(mob/living/user, obj/item/tool, list/modifiers)

@@ -54,6 +54,7 @@
 	. = ..()
 	if(!.)
 		return
+	owner.trip_with_gun("knockdown") // DOPPLER EDIT ADDITION - Gun safety malfunction
 	ADD_TRAIT(owner, TRAIT_FLOORED, TRAIT_STATUS_EFFECT(id))
 
 /datum/status_effect/incapacitating/knockdown/on_remove()
@@ -84,6 +85,7 @@
 	. = ..()
 	if(!.)
 		return
+	owner.trip_with_gun("knockdown") // DOPPLER EDIT ADDITION - Gun safety malfunction
 	owner.add_traits(list(TRAIT_INCAPACITATED, TRAIT_IMMOBILIZED, TRAIT_FLOORED, TRAIT_HANDS_BLOCKED), TRAIT_STATUS_EFFECT(id))
 
 /datum/status_effect/incapacitating/paralyzed/on_remove()

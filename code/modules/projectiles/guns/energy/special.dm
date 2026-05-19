@@ -214,7 +214,7 @@
 		qdel(C)
 		return
 
-/obj/item/gun/energy/wormhole_projector/can_shoot()
+/obj/item/gun/energy/wormhole_projector/can_shoot(visuals) // DOPPLER EDIT - /obj/item/gun/energy/wormhole_projector/can_shoot()
 	if(!firing_core)
 		return FALSE
 	return ..()
@@ -355,7 +355,7 @@
 		return
 	return ..()
 
-/obj/item/gun/energy/gravity_gun/can_shoot()
+/obj/item/gun/energy/gravity_gun/can_shoot(visuals) // DOPPLER EDIT - Visuals param. Original: /obj/item/gun/energy/can_shoot()
 	if(!firing_core)
 		return FALSE
 	return ..()
