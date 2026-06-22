@@ -667,7 +667,7 @@
 		return
 	return ..()
 
-/obj/item/gun/ballistic/attack_self(mob/living/user)
+/obj/item/gun/ballistic/unique_action(mob/living/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/attack_self(mob/living/user)
 	if(!internal_magazine && magazine)
 		if(!magazine.ammo_count())
 			eject_magazine(user)

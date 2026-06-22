@@ -292,8 +292,8 @@
 	if(!can_shoot())
 		shoot_with_empty_chamber(shooter)
 		return FALSE
-	var/obj/item/bodypart/other_hand = shooter.has_hand_for_held_index(shooter.get_inactive_hand_index())
-	if(weapon_weight == WEAPON_HEAVY && (shooter.get_inactive_held_item() || !other_hand))
+	//var/obj/item/bodypart/other_hand = shooter.has_hand_for_held_index(shooter.get_inactive_hand_index()) // DOPPLER REMOVAL - Replaced with shiptest wielding
+	if(weapon_weight == WEAPON_HEAVY && (!wielded)) // DOPPLER EDIT - Shiptest wielding. Original: if(weapon_weight == WEAPON_HEAVY && (shooter.get_inactive_held_item() || !other_hand))
 		balloon_alert(shooter, "use both hands!")
 		return FALSE
 	return TRUE

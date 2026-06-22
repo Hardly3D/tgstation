@@ -69,7 +69,7 @@
 	cell_type = /obj/item/stock_parts/power_store/cell/infinite
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/pulse)
 
-/obj/item/gun/energy/pulse/destroyer/attack_self(mob/living/user)
+/obj/item/gun/energy/pulse/destroyer/unique_action(mob/living/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/energy/pulse/destroyer/attack_self(mob/living/user)
 	to_chat(user, span_danger("[src.name] has three settings, and they are all DESTROY."))
 
 /obj/item/gun/energy/pulse/pistol

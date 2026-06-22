@@ -69,7 +69,7 @@
 		. += span_notice("Its pressure regulator is cranked to the max, instantly injecting the reagents at the cost of breaking the syringes fired.")
 	. += span_notice("Right-click [src] in-hand to switch it to [low_power ? "full" : "low"] power.")
 
-/obj/item/gun/syringe/attack_self(mob/living/user, list/modifiers)
+/obj/item/gun/syringe/unique_action(mob/living/user, list/modifiers) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/syringe/attack_self(mob/living/user, list/modifiers)
 	if (!syringes.len)
 		balloon_alert(user, "it's empty!")
 		return FALSE

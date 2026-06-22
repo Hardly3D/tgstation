@@ -90,7 +90,7 @@
 		SET_BASE_PIXEL(0, 0)
 		update_appearance()
 
-/obj/item/gun/ballistic/rifle/boltaction/attack_self(mob/user)
+/obj/item/gun/ballistic/rifle/boltaction/unique_action(mob/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/rifle/boltaction/attack_self(mob/user)
 	if(jammed)
 		if(prob(unjam_chance))
 			jammed = FALSE
@@ -400,7 +400,7 @@
 /obj/item/gun/ballistic/rifle/enchanted/proc/discard_gun(mob/living/user)
 	user.throw_item(pick(oview(7,get_turf(user))))
 
-/obj/item/gun/ballistic/rifle/enchanted/attack_self()
+/obj/item/gun/ballistic/rifle/enchanted/unique_action() // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/rifle/enchanted/attack_self()
 	return
 
 /obj/item/gun/ballistic/rifle/enchanted/process_fire(atom/target, mob/living/user, message = TRUE, params = null, zone_override = "", bonus_spread = 0)

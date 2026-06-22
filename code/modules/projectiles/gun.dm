@@ -400,8 +400,8 @@
 	if(check_botched(user, target))
 		return
 
-	var/obj/item/bodypart/other_hand = user.has_hand_for_held_index(user.get_inactive_hand_index()) //returns non-disabled inactive hands
-	if(weapon_weight == WEAPON_HEAVY && (user.get_inactive_held_item() || !other_hand))
+	// var/obj/item/bodypart/other_hand = user.has_hand_for_held_index(user.get_inactive_hand_index()) //returns non-disabled inactive hands // DOPPLER REMOVAL - Replaced with shiptest wielding
+	if(weapon_weight == WEAPON_HEAVY && (!wielded)) // DOPPLER EDIT - Shiptest wielding. Original: if(weapon_weight == WEAPON_HEAVY && (user.get_inactive_held_item() || !other_hand))
 		balloon_alert(user, "use both hands!")
 		return
 	//DUAL (or more!) WIELDING
@@ -511,7 +511,14 @@
 
 	//Vary by at least this much
 	var/randomized_bonus_spread = rand(base_bonus_spread, bonus_spread)
-	var/randomized_gun_spread = spread ? rand(0, spread) : 0
+	//var/randomized_gun_spread = spread ? rand(0, spread) : 0 DOPPER REMOVAL - New recoil below
+	// DOPPLER ADDITION BEGIN - Wielding recoil system
+	var/randomized_gun_spread
+	if(wielded_fully && spread)
+		randomized_gun_spread = spread ? rand(0, spread) : 0
+	else if(!wielded_fully && spread_unwielded)
+		randomized_gun_spread = spread_unwielded ? rand(0, spread_unwielded) : 0
+	// DOPPLER ADDITION END
 	var/total_random_spread = max(0, randomized_bonus_spread + randomized_gun_spread)
 	var/burst_spread_mult = rand()
 

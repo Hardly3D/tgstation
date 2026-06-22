@@ -407,7 +407,7 @@ it is often confused with the mech weapon of the same name, since it is a bit mo
 			do_sparks(3, FALSE, user)
 	return FALSE
 
-/obj/item/gun/energy/tesla_cannon/attack_self(mob/living/user)
+/obj/item/gun/energy/tesla_cannon/unique_action(mob/living/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/energy/tesla_cannon/attack_self(mob/living/user)
 	. = ..()
 	if(ready_to_fire)
 		w_class = WEIGHT_CLASS_NORMAL

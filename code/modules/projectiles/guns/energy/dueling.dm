@@ -193,7 +193,7 @@
 			return "duel_blue"
 	return "duel_red"
 
-/obj/item/gun/energy/dueling/attack_self(mob/living/user)
+/obj/item/gun/energy/dueling/unique_action(mob/living/user) // Doppler Edit - Unique Action - Original: /obj/item/gun/energy/dueling/attack_self(mob/living/user)
 	. = ..()
 	if(!check_valid_duel(user, TRUE))
 		return

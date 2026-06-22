@@ -1,4 +1,15 @@
 /obj/item/gun
+
+	/*
+	* Spread & Recoil
+	*/
+	/// Wielded variables can be found on 'code/modules/projectiles/gun.dm'
+
+	///How much the bullet scatters when fired while unwielded.
+	var/spread_unwielded = 12
+	///Screen shake when the weapon is fired while unwielded.
+	var/recoil_unwielded = 0
+
 	/*
 	* Safety
 	*/
@@ -37,7 +48,54 @@
 /obj/item/gun/examine(mob/user)
 	. = ..()
 	if(has_safety)
-		. += "The safety is [safety ? "<span class='green'>ON</span>" : "<span class='red'>OFF</span>"]. Ctrl-Click to toggle the safety."
+		. += "The safety is [safety ? span_green("ON") : span_red("OFF")]. Ctrl-Click or Right Click to toggle the safety."
+
+
+/obj/item/gun/Initialize(mapload)
+	. = ..()
+	RegisterSignal(src, COMSIG_TWOHANDED_WIELD, PROC_REF(on_wield))
+	RegisterSignal(src, COMSIG_TWOHANDED_UNWIELD, PROC_REF(on_unwield))
+	AddComponent(/datum/component/two_handed)
+
+	// If the gun is from bitrunning/deathmatch, safety will be off by default if it isn't already
+	if(safety && is_reserved_level(src.z) && !istype(get_area(src.loc), /area/shuttle))
+		safety = FALSE
+
+/// Triggered on wield of two handed item
+/obj/item/gun/proc/on_wield(obj/item/source, mob/user, instant)
+	wielded = TRUE
+	INVOKE_ASYNC(src, PROC_REF(do_wield), user, instant)
+
+/obj/item/gun/proc/do_wield(mob/user, instant)
+	user.add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/gun, multiplicative_slowdown = wield_slowdown)
+	wield_time = world.time + wield_delay
+	if(wield_time > 0 && !instant)
+		if(do_after(
+			user,
+			wield_delay,
+			user,
+			IGNORE_USER_LOC_CHANGE | IGNORE_TARGET_LOC_CHANGE,
+			TRUE,
+			CALLBACK(src, PROC_REF(is_wielded)))
+			)
+			wielded_fully = TRUE
+			return TRUE
+	else
+		wielded_fully = TRUE
+		return TRUE
+
+/// triggered on unwield of two handed item
+/obj/item/gun/proc/on_unwield(obj/item/source, mob/user)
+	wielded = FALSE
+	wielded_fully = FALSE
+	user.remove_movespeed_modifier(/datum/movespeed_modifier/gun)
+
+/obj/item/gun/proc/is_wielded()
+	return wielded
+
+/obj/item/gun/attack_secondary(mob/living/victim, mob/living/user, list/modifiers, list/attack_modifiers)
+	toggle_safety(user)
+	return CLICK_ACTION_SUCCESS
 
 /obj/item/gun/proc/toggle_safety(mob/user, silent=FALSE, override_check = FALSE)
 	if(!has_safety)
@@ -55,7 +113,7 @@
 			span_notice("[user] turns the [safety_wording] on [src] [safety ? span_green("ON") : span_red("OFF")]."),
 			span_notice("You turn the [safety_wording] on [src] [safety ? span_green("ON") : span_red("OFF")]."),
 		)
-	//SEND_SIGNAL(src, COMSIG_GUN_TOGGLE_SAFETY, user)
+	SEND_SIGNAL(src, COMSIG_GUN_TOGGLE_SAFETY, user)
 	update_appearance(UPDATE_OVERLAYS)
 	return TRUE
 
@@ -97,7 +155,7 @@
 
 /obj/item/gun/proc/unsafe_shot(target)
 	if(chambered)
-		chambered.fire_casing(target, null, null, null, suppressed, ran_zone(BODY_ZONE_CHEST, 50), 0, src, TRUE)
+		chambered.fire_casing(target, null, null, null, suppressed, ran_zone(BODY_ZONE_CHEST, 50), 0, src)
 		playsound(src, fire_sound, 100, TRUE)
 
 /mob/living/proc/trip_with_gun(cause)
@@ -126,6 +184,10 @@
 	. = ..()
 	update_appearance()
 
+/datum/movespeed_modifier/gun
+	multiplicative_slowdown = 1
+	variable = TRUE
+
 /obj/item/gun/ballistic
 	has_safety = TRUE
 	safety = TRUE
@@ -137,5 +199,49 @@
 /obj/item/gun/syringe/blowgun
 	dry_fire_text = "pshoo" //heehee pshoo
 
+/obj/item/gun/ballistic/automatic/pistol
+	recoil = 0.2
+	recoil_unwielded = 3
+
+	spread_unwielded = 7
+
 /obj/item/gun/ballistic/revolver
 	dry_fire_text = "snap"
+	recoil_unwielded = 4
+
+/obj/item/gun/ballistic/shotgun
+	recoil = 0.5
+	recoil_unwielded = 6
+
+/obj/item/gun/ballistic/shotgun/bulldog
+	recoil = 0.2
+
+/obj/item/proc/unique_action(mob/living/user)
+	if(SEND_SIGNAL(src, COMSIG_ITEM_UNIQUE_ACTION, user))
+		return TRUE
+
+/obj/item/gun/ballistic/revolver/unique_action(mob/living/user)
+	rack(user)
+	return
+
+/obj/item/gun/energy
+	spread = 0
+	spread_unwielded = 10
+
+/// No recoil for toys, they still get safeties because I think it's funny.
+
+/obj/item/gun/ballistic/automatic/toy
+	recoil = 0
+	recoil_unwielded = 0
+
+/obj/item/gun/ballistic/shotgun/toy
+	recoil = 0
+	recoil_unwielded = 0
+
+/obj/item/gun/ballistic/automatic/l6_saw/toy
+	recoil = 0
+	recoil_unwielded = 0
+
+/obj/item/gun/ballistic/automatic/c20r/toy
+	recoil = 0
+	recoil_unwielded = 0

@@ -231,7 +231,7 @@
 		return FALSE
 	return ..()
 
-/obj/item/gun/ballistic/revolver/russian/attack_self(mob/user)
+/obj/item/gun/ballistic/revolver/russian/unique_action(mob/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/revolver/russian/attack_self(mob/user)
 	if(!spun)
 		spin()
 		return TRUE

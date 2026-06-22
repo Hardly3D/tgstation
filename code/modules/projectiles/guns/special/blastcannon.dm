@@ -75,7 +75,7 @@
 	if(bomb)
 		. += span_notice("A bomb is loaded inside.")
 
-/obj/item/gun/blastcannon/attack_self(mob/user)
+/obj/item/gun/blastcannon/unique_action(mob/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/blastcannon/attack_self(mob/user)
 	if(bomb)
 		bomb.forceMove(user.loc)
 		user.put_in_hands(bomb)

@@ -180,7 +180,7 @@
 			recharge_newshot(TRUE)
 		update_appearance()
 
-/obj/item/gun/energy/attack_self(mob/living/user as mob)
+/obj/item/gun/energy/unique_action(mob/living/user as mob) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/energy/attack_self(mob/living/user as mob)
 	. = ..()
 	if(.)
 		return
@@ -188,11 +188,11 @@
 	if(ammo_type.len > 1 && can_select)
 		select_fire(user)
 
-/obj/item/gun/energy/can_shoot(visuals) // DOPLER EDIT - Visuals param. Original: /obj/item/gun/energy/can_shoot()
+/obj/item/gun/energy/can_shoot(visuals) // DOPPLER EDIT - Visuals param. Original: /obj/item/gun/energy/can_shoot()
 	// DOPPLER ADDITION START - Gun safety
 	if(safety && !visuals)
 		return FALSE
-	// DOPPER ADDITION END
+	// DOPPLER ADDITION END
 	var/obj/item/ammo_casing/energy/shot = ammo_type[select]
 	return !QDELETED(cell) ? (cell.charge >= shot.e_cost) : FALSE
 

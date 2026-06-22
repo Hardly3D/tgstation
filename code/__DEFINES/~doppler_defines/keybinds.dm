@@ -1,0 +1,1 @@
+#define COMSIG_KB_MOB_UNIQUEACTION_DOWN "keybinding_mob_uniqueaction_down"

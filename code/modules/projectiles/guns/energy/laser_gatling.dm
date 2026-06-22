@@ -114,7 +114,7 @@
 	ammo_pack = null
 	return ..()
 
-/obj/item/gun/energy/minigun/attack_self(mob/living/user)
+/obj/item/gun/energy/minigun/unique_action(mob/living/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/energy/minigun/attack_self(mob/living/user)
 	return
 
 /obj/item/gun/energy/minigun/dropped(mob/user)

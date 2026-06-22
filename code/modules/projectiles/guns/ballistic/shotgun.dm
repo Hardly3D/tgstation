@@ -143,7 +143,7 @@
 	QDEL_NULL(alternate_magazine)
 	return ..()
 
-/obj/item/gun/ballistic/shotgun/automatic/dual_tube/attack_self(mob/living/user)
+/obj/item/gun/ballistic/shotgun/automatic/dual_tube/unique_action(mob/living/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/shotgun/automatic/dual_tube/attack_self(mob/living/user)
 	if(!chambered && get_ammo())
 		rack()
 	else

@@ -59,7 +59,7 @@
 	. = ..()
 	drawn = FALSE
 
-/obj/item/gun/ballistic/bow/attack_self(mob/user)
+/obj/item/gun/ballistic/bow/unique_action(mob/user) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/ballistic/bow/attack_self(mob/user)
 	if(!chambered)
 		balloon_alert(user, "no arrow nocked!")
 		return
