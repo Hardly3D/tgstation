@@ -3,20 +3,20 @@
 	/*
 	* Spread & Recoil
 	*/
-	/// Wielded variables can be found on 'code/modules/projectiles/gun.dm'
-
 	///How much the bullet scatters when fired while unwielded.
+	spread = 0
 	var/spread_unwielded = 12
 	///Screen shake when the weapon is fired while unwielded.
+	recoil = 0
 	var/recoil_unwielded = 0
 
 	/*
 	* Safety
 	*/
 
-	/// Does this gun have a toggle for gun safety?
+	///Does this gun have a toggle for gun safety?
 	var/has_safety = FALSE
-	/// Is safety on? If so, we can't fire the weapon
+	///Is safety on? If so, we can't fire the weapon
 	var/safety = FALSE
 	///The wording of safety. Useful for guns that have a non-standard safety system, like a revolver
 	var/safety_wording = "safety"
@@ -32,13 +32,13 @@
 	 * Wielding
 	*/
 
-	//true if the gun is wielded via twohanded component, shouldnt affect anything else
+	///True if the gun is wielded via twohanded component, shouldnt affect anything else
 	var/wielded = FALSE
-	//true if the gun is wielded after delay, should affects accuracy
+	///True if the gun is wielded after delay, should affects accuracy
 	var/wielded_fully = FALSE
 	///Slowdown for wielding
 	var/wield_slowdown = 0.1
-	///slowdown for aiming whilst wielding
+	///Slowdown for aiming whilst wielding
 	var/aimed_wield_slowdown = 0.1
 	///How long between wielding and firing in tenths of seconds
 	var/wield_delay	= 0.4 SECONDS
@@ -192,6 +192,14 @@
 	has_safety = TRUE
 	safety = TRUE
 
+/obj/item/gun/ballistic/bow
+	has_safety = FALSE
+	safety = FALSE
+
+/obj/item/gun/energy/wiremod_gun
+	has_safety = FALSE
+	safety = FALSE
+
 /obj/item/gun/energy
 	has_safety = TRUE
 	safety = TRUE
@@ -199,22 +207,69 @@
 /obj/item/gun/syringe/blowgun
 	dry_fire_text = "pshoo" //heehee pshoo
 
+/obj/item/gun/ballistic/automatic
+	spread = 0
+	spread_unwielded = 13
+	recoil = 0
+	recoil_unwielded = 0.2
+	wield_delay	= 1 SECONDS
+
+	wield_slowdown = PDW_SLOWDOWN
+	aimed_wield_slowdown = SMG_AIM_SLOWDOWN
+
+/// PISTOLS
+
 /obj/item/gun/ballistic/automatic/pistol
+	wield_delay = 0.2 SECONDS
 	recoil = 0.2
 	recoil_unwielded = 3
-
+	spread = 0
 	spread_unwielded = 7
+	wield_slowdown = PISTOL_SLOWDOWN
+	aimed_wield_slowdown = PISTOL_AIM_SLOWDOWN
+
+/obj/item/gun/ballistic/automatic/pistol/deagle
+	wield_delay = 0.55 SECONDS
+	recoil = 0.5
+	recoil_unwielded = 2
+	spread = 0
+	spread_unwielded = 10
+
+/// SMGS
+
+/obj/item/gun/ballistic/automatic/c20r
+	recoil = 0.2
+	recoil_unwielded = 1.5
+
+/// REVOLVERS
 
 /obj/item/gun/ballistic/revolver
 	dry_fire_text = "snap"
-	recoil_unwielded = 4
+	recoil_unwielded = 2
+
+	wield_slowdown = REVOLVER_SLOWDOWN
+	aimed_wield_slowdown = PISTOL_AIM_SLOWDOWN
 
 /obj/item/gun/ballistic/shotgun
 	recoil = 0.5
-	recoil_unwielded = 6
+	recoil_unwielded = 6 // Should only happen with sawoff or unique shotguns (Warden, Bulldog, etc)
+
+	wield_slowdown = SHOTGUN_SLOWDOWN
+	aimed_wield_slowdown = SHOTGUN_AIM_SLOWDOWN
+	wield_delay = 0.8 SECONDS
 
 /obj/item/gun/ballistic/shotgun/bulldog
 	recoil = 0.2
+
+	wield_slowdown = HEAVY_SHOTGUN_SLOWDOWN
+	wield_delay = 0.65 SECONDS // More compact or something
+
+/obj/item/gun/ballistic/shotgun/automatic
+	recoil = 0.3
+
+/obj/item/gun/ballistic/shotgun/musket // What the fuck do you mean this is a shotgun
+	wield_slowdown = RIFLE_SLOWDOWN
+	aimed_wield_slowdown = RIFLE_AIM_SLOWDOWN
 
 /obj/item/proc/unique_action(mob/living/user)
 	if(SEND_SIGNAL(src, COMSIG_ITEM_UNIQUE_ACTION, user))
@@ -224,9 +279,15 @@
 	rack(user)
 	return
 
+/// ENERGY
+
 /obj/item/gun/energy
 	spread = 0
 	spread_unwielded = 10
+	wield_slowdown = LASER_PISTOL_SLOWDOWN
+
+/obj/item/gun/energy/e_gun
+	wield_slowdown = LASER_RIFLE_SLOWDOWN
 
 /// No recoil for toys, they still get safeties because I think it's funny.
 
@@ -243,5 +304,9 @@
 	recoil_unwielded = 0
 
 /obj/item/gun/ballistic/automatic/c20r/toy
+	recoil = 0
+	recoil_unwielded = 0
+
+/obj/item/gun/ballistic/automatic/pistol/toy
 	recoil = 0
 	recoil_unwielded = 0

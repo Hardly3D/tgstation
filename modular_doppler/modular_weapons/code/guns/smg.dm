@@ -5,6 +5,10 @@
 	icon = 'modular_doppler/modular_weapons/icons/obj/guns32x.dmi'
 	icon_state = "sindaryo"
 
+	recoil = 0.2
+	recoil_unwielded = 1.5
+	spread_unwielded = 20
+
 /obj/item/gun/ballistic/automatic/wt550/add_bayonet_point()
 	return
 
@@ -78,7 +82,10 @@
 	greyscale_config_inhand_right = /datum/greyscale_config/schiebenmaschine_righthand
 	greyscale_colors = "#bb2222" //randomized on init but we need this for mapping icons and stuff
 	can_suppress = FALSE
+	recoil = 0.1
+	recoil_unwielded = 0.5
 	spread = 25
+	spread_unwielded = 35
 	dual_wield_spread = 15 // additive with the previous spread var, the default value makes dual wielding these literally worse so we lower it a touch
 	flags_1 = IS_PLAYER_COLORABLE_1
 	bolt_type = BOLT_TYPE_OPEN
