@@ -93,10 +93,6 @@
 /obj/item/gun/proc/is_wielded()
 	return wielded
 
-/obj/item/gun/attack_secondary(mob/living/victim, mob/living/user, list/modifiers, list/attack_modifiers)
-	toggle_safety(user)
-	return CLICK_ACTION_SUCCESS
-
 /obj/item/gun/proc/toggle_safety(mob/user, silent=FALSE, override_check = FALSE)
 	if(!has_safety)
 		return FALSE
@@ -120,6 +116,13 @@
 /obj/item/gun/item_ctrl_click(mob/user)
 	toggle_safety(user)
 	return CLICK_ACTION_SUCCESS
+
+/obj/item/gun/attack_self_secondary(mob/user, list/modifiers)
+	. = ..()
+	if(. == SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN)
+		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+	if(toggle_safety(user))
+		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 /obj/item/gun/update_overlays()
 	. = ..()
