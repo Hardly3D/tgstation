@@ -111,3 +111,6 @@
 #define TRAIT_POWER_MEDICAL "power_medical"
 #define TRAIT_POWER_ENGINEERING "power_engineering"
 #define TRAIT_POWER_SERVICE "power_service"
+
+/// Trait gained when an item is currently displaying an ammo HUD on a mob
+#define TRAIT_DISPLAYING_AMMO_HUD "displaying_ammo_hud"

@@ -292,6 +292,10 @@
 	zone_select.icon = ui_style
 	zone_select.update_appearance()
 	static_inventory += zone_select
+	// DOPPLER ADDITION BEGIN - ammo counter
+	ammo_counter = new /atom/movable/screen/ammo_counter(null, src)
+	infodisplay += ammo_counter
+	// DOPPLER ADDITION END
 
 	for(var/atom/movable/screen/inventory/inv in (static_inventory + toggleable_inventory))
 		if(inv.slot_id)

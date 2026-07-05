@@ -231,6 +231,10 @@
 	wield_slowdown = PISTOL_SLOWDOWN
 	aimed_wield_slowdown = PISTOL_AIM_SLOWDOWN
 
+/obj/item/gun/ballistic/automatic/pistol/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 0.2, scope_icon = FALSE)
+
 /obj/item/gun/ballistic/automatic/pistol/deagle
 	wield_delay = 0.55 SECONDS
 	recoil = 0.5

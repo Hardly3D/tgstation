@@ -27,3 +27,5 @@
 #define COMSIG_SOULCATCHER_UPDATE_JOINABILITY "soulcatcher_update_joinability"
 /// For modifying a mob holder based on what it's holding
 #define COMSIG_ADDING_MOB_HOLDER_SPECIALS "adding_mob_holder_specials"
+///The gun needs to update the gun hud!
+#define COMSIG_UPDATE_AMMO_HUD "update_ammo_hud"

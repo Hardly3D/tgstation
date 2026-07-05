@@ -55,6 +55,10 @@
 		if(inv.slot_id)
 			inv_slots[TOBITSHIFT(inv.slot_id) + 1] = inv
 			inv.update_appearance()
+	// DOPPLER ADDITION BEGIN - ammo counter
+	ammo_counter = new /atom/movable/screen/ammo_counter(null, src)
+	infodisplay += ammo_counter
+	// DOPPLER ADDITION END
 
 /datum/hud/dextrous/persistent_inventory_update()
 	if(!mymob)

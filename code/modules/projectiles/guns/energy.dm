@@ -179,6 +179,7 @@
 		if(!chambered) //if empty chamber we try to charge a new shot
 			recharge_newshot(TRUE)
 		update_appearance()
+		SEND_SIGNAL(src, COMSIG_UPDATE_AMMO_HUD) // DOPPLER EDIT ADDITION
 
 /obj/item/gun/energy/unique_action(mob/living/user as mob) // DOPPLER EDIT - Unique Action - Original: /obj/item/gun/energy/attack_self(mob/living/user as mob)
 	. = ..()

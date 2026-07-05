@@ -5,3 +5,4 @@
 #define span_yellow(str) ("<span class='yellow'>" + str + "</span>")
 #define span_rlooc(str) ("<span class='rlooc'>" + str + "</span>")
 #define span_oocplain(str) ("<span class='oocplain'>" + str + "</span>")
+#define span_maptext(str) ("<span class='maptext'>" + str + "</span>")

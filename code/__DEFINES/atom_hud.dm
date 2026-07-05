@@ -49,6 +49,8 @@
 // DOPPLER ADDITION BEGIN
 /// If they have the implanted quirk
 #define SEC_IMPLANT_HUD "25"
+/// Counter for ammo
+#define AMMO_HUD "26"
 // DOPPLER ADDITION END
 
 //by default everything in the hud_list of an atom is an image
