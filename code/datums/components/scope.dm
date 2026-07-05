@@ -14,12 +14,18 @@
 	/// if not null, an item action will be added. Redundant if the mode is ZOOM_METHOD_RIGHT_CLICK or ZOOM_METHOD_WIELD.
 	var/item_action_type
 
-/datum/component/scope/Initialize(range_modifier = 1, zoom_method = ZOOM_METHOD_RIGHT_CLICK, item_action_type)
+	// DOPPLER ADDITION BEGIN - scope_icon var for aiming down sights
+	/// If set to TRUE, shows a scope and the sounds associated with it
+	var/scope_icon = TRUE
+	// DOPPLER ADDITION END
+
+/datum/component/scope/Initialize(range_modifier = 1, zoom_method = ZOOM_METHOD_RIGHT_CLICK, item_action_type, scope_icon = TRUE) // DOPPLER EDIT - scope_icon var. ORIGINAL: /datum/component/scope/Initialize(range_modifier = 1, zoom_method = ZOOM_METHOD_RIGHT_CLICK, item_action_type)
 	if(!isitem(parent))
 		return COMPONENT_INCOMPATIBLE
 	src.range_modifier = range_modifier
 	src.zoom_method = zoom_method
 	src.item_action_type = item_action_type
+	src.scope_icon = scope_icon // DOPPLER EDIT ADDITION
 
 /datum/component/scope/Destroy(force)
 	if(tracker)
@@ -164,8 +170,16 @@
 	if(HAS_TRAIT(user, TRAIT_USER_SCOPED))
 		user.balloon_alert(user, "already zoomed!")
 		return
-	user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE)
+	// DOPPLER ADDITION BEGIN
+	if(scope_icon)
+		user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE)
+	// DOPPLER ADDITION END
+	//user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE) // DOPPLER REMOVAL - Refer to above
 	tracker = user.overlay_fullscreen("scope", /atom/movable/screen/fullscreen/cursor_catcher/scope, isgun(parent))
+	// DOPPLER ADDITION BEGIN
+	if(!scope_icon)
+		tracker.alpha = 0 // A bit hacky but no icon results in a non-functioning scope
+	// DOPPLER ADDITION END
 	tracker.assign_to_mob(user, range_modifier)
 	tracker_owner_ckey = user.ckey
 	if(user.is_holding(parent))
@@ -220,7 +234,11 @@
 	))
 	REMOVE_TRAIT(user, TRAIT_USER_SCOPED, REF(src))
 
-	user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE, frequency = -1)
+	// DOPPLER ADDITION BEGIN
+	if(scope_icon)
+		user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE, frequency = -1)
+	// DOPPLER ADDITION END
+	//user.playsound_local(parent, 'sound/items/weapons/scope.ogg', 75, TRUE, frequency = -1) // DOPPLER REMOVAL - Refer to above
 	user.clear_fullscreen("scope")
 
 	// if the client has ended up in another mob, find that mob so we can fix their cursor
