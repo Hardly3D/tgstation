@@ -25,7 +25,7 @@
 	desc = "Lab grown lambskin has been adhered to a spandex underlayer to produce a leather with considerable \
 	four way stretch, allowing for a closer fit in leather pants than ever before. This style features integrated \
 	kneepads."
-	icon = 'modular_doppler/modular_cosmetics/icons/obj/under/miscellania.dmi'
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
 	icon_state = "/obj/item/clothing/under/pants/moto_leggings"
 	post_init_icon_state = "moto_leggings"
 	greyscale_config = /datum/greyscale_config/moto_leggings
@@ -42,8 +42,8 @@
 	desc = "A pair of baggy shorts with a contoured waistband and weather-repellant fabrication. A pair of fitted kneepads \
 	and knit baselayer leggings are included. The trio is surprisingly practical, except that it leaves the wearer with three \
 	things to take off at the end of the day."
-	icon = 'modular_doppler/modular_cosmetics/icons/obj/under/miscellania.dmi'
-	icon_state = "/obj/item/clothing/under/pants/tech_nyne_bottomwear"
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
+	icon_state = "/obj/item/clothing/under/pants/technyne_bottomwear"
 	post_init_icon_state = "tech_nyne_bottomwear"
 	greyscale_config = /datum/greyscale_config/tech_nyne_bottomwear
 	greyscale_config_worn_bodyshapes = list(
@@ -57,7 +57,7 @@
 /obj/item/clothing/under/pants/megashorts
 	name = "\improper JUNCO megashorts"
 	desc = "A broad pair of ripstop shorts that have remained popular within Marsian skate culture for decades."
-	icon = 'modular_doppler/modular_cosmetics/icons/obj/under/miscellania.dmi'
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
 	icon_state = "/obj/item/clothing/under/pants/megashorts"
 	post_init_icon_state = "megashorts"
 	greyscale_config = /datum/greyscale_config/megashorts
@@ -73,7 +73,7 @@
 	name = "\improper JUNCO megacargo pants"
 	desc = "De riguer for techno classicists, these extreme wide leg pants come back into style every \
 		now and then. This pair has generous onboard storage."
-	icon = 'modular_doppler/modular_cosmetics/icons/obj/under/miscellania.dmi'
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
 	icon_state = "/obj/item/clothing/under/pants/big_pants"
 	post_init_icon_state = "megacargos"
 	greyscale_config = /datum/greyscale_config/megacargo_pants
@@ -90,7 +90,7 @@
 	name = "\improper JUNCO megajeans"
 	desc = "An ocean of denim for total encapsulation of the wearer's legs. The pockets are roomy beyond any sense \
 	of practicality."
-	icon = 'modular_doppler/modular_cosmetics/icons/obj/under/miscellania.dmi'
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
 	icon_state = "/obj/item/clothing/under/pants/megajeans"
 	post_init_icon_state = "megajeans"
 	greyscale_config = /datum/greyscale_config/megajeans
@@ -185,13 +185,14 @@
 	strip_delay = 8 SECONDS
 	body_parts_covered = CHEST|GROIN|LEGS|ARMS
 	supports_variations_flags = CLOTHING_DIGITIGRADE_VARIATION
-	supported_bodyshapes = list(BODYSHAPE_HUMANOID, BODYSHAPE_DIGITIGRADE, BODYSHAPE_TAUR_SNAKE, BODYSHAPE_TAUR_HOOF, BODYSHAPE_TAUR_PAW)
+	supported_bodyshapes = list(BODYSHAPE_HUMANOID, BODYSHAPE_DIGITIGRADE, BODYSHAPE_TAUR_SNAKE, BODYSHAPE_TAUR_HOOF, BODYSHAPE_TAUR_PAW, BODYSHAPE_TESHARI)
 	bodyshape_icon_files = list(
 		BODYSHAPE_HUMANOID_T = 'modular_doppler/modular_cosmetics/icons/mob/under/miscellania.dmi',
 		BODYSHAPE_DIGITIGRADE_T = 'modular_doppler/modular_cosmetics/icons/mob/under/miscellania_digi.dmi',
 		BODYSHAPE_TAUR_SNAKE_T = 'modular_doppler/modular_cosmetics/icons/mob/under/miscellania_snake.dmi',
 		BODYSHAPE_TAUR_HOOF_T = 'modular_doppler/modular_cosmetics/icons/mob/under/miscellania_hoof.dmi',
 		BODYSHAPE_TAUR_PAW_T = 'modular_doppler/modular_cosmetics/icons/mob/under/miscellania_paw.dmi',
+		BODYSHAPE_TESHARI_T = 'modular_doppler/modular_species/species_types/teshari/icons/clothing/uniform.dmi'
 	)
 	can_adjust = FALSE
 	obj_flags = parent_type::obj_flags | INFINITE_RESKIN
@@ -218,11 +219,14 @@
 	desc = "A form-fitting bodysuit made of a multichromatic latex polymer. Ages ago, it would've been a pain in the ass \
 	to get into, but centuries of clothing technology have made wearing it easier than ever before. \
 	Still, it takes longer to take off than an equivalent cloth garment."
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
+	icon_state = "/obj/item/clothing/under/latexsuit/gags_latexsuit"
 	greyscale_config = /datum/greyscale_config/gags_latexsuit
 	post_init_icon_state = "gags_latexsuit"
 	greyscale_config_worn_bodyshapes = list(
 		BODYSHAPE_DIGITIGRADE_T = /datum/greyscale_config/gags_latexsuit/worn/digi,
 		BODYSHAPE_HUMANOID_T = /datum/greyscale_config/gags_latexsuit/worn,
+		BODYSHAPE_TESHARI_T = /datum/greyscale_config/gags_latexsuit/worn/teshari,
 	)
 	greyscale_colors = "#636369#636369"
 	flags_1 = IS_PLAYER_COLORABLE_1
@@ -248,3 +252,56 @@
 	)
 	female_sprite_flags = FEMALE_UNIFORM_NO_BREASTS
 	can_adjust = FALSE
+
+/obj/item/clothing/under/nautical_shortset
+	name = "nautical shortset"
+	desc = "A breezy nautical ensemble set in a sun-repelling fabric. A bit saccharine and twee, it's often bought \
+	on someone's behalf."
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
+	icon_state = "/obj/item/clothing/under/nautical_shortset"
+	post_init_icon_state = "nautical_shortset"
+	greyscale_config = /datum/greyscale_config/nautical_shortset
+	greyscale_config_worn = /datum/greyscale_config/nautical_shortset/worn
+	supported_bodyshapes = list(BODYSHAPE_HUMANOID, BODYSHAPE_DIGITIGRADE)
+	greyscale_config_worn_bodyshapes = list(
+		BODYSHAPE_HUMANOID_T = /datum/greyscale_config/nautical_shortset/worn,
+		BODYSHAPE_DIGITIGRADE_T = /datum/greyscale_config/nautical_shortset/worn/digi,
+	)
+	greyscale_colors = "#ebebeb#4a518d#942737#4a518d"
+	flags_1 = IS_PLAYER_COLORABLE_1
+
+/obj/item/clothing/under/nautical_shirt
+	name = "nautical shirt"
+	desc = "A broadcloth shirt with an old nautical motif. Once a practical garment for sailing, it's more of a novelty \
+	for most wearers these days."
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
+	icon_state = "/obj/item/clothing/under/nautical_shirt"
+	post_init_icon_state = "nautical_shirt"
+	greyscale_config = /datum/greyscale_config/nautical_shirt
+	greyscale_config_worn = /datum/greyscale_config/nautical_shirt/worn
+	greyscale_colors = "#ebebeb#4a518d#942737"
+	flags_1 = IS_PLAYER_COLORABLE_1
+	slot_flags = ITEM_SLOT_ICLOTHING | ITEM_SLOT_OCLOTHING	// to pair with shirts, skirts, etc
+	body_parts_covered = CHEST|ARMS
+
+/obj/item/clothing/under/nautical_shorts
+	name = "nautical shorts"
+	desc = "Short and very crispy pressed, these have something of a prep vibe to them."
+	icon = 'icons/map_icons/clothing/under/_under.dmi'
+	icon_state = "/obj/item/clothing/under/nautical_shorts"
+	post_init_icon_state = "nautical_shorts"
+	greyscale_config = /datum/greyscale_config/nautical_shorts
+	greyscale_config_worn = /datum/greyscale_config/nautical_shorts/worn
+	supported_bodyshapes = list(BODYSHAPE_HUMANOID, BODYSHAPE_DIGITIGRADE)
+	greyscale_config_worn_bodyshapes = list(
+		BODYSHAPE_HUMANOID_T = /datum/greyscale_config/nautical_shorts/worn,
+		BODYSHAPE_DIGITIGRADE_T = /datum/greyscale_config/nautical_shorts/worn/digi,
+	)
+	greyscale_colors = "#4a518d"
+	flags_1 = IS_PLAYER_COLORABLE_1
+	can_adjust = FALSE
+	body_parts_covered = GROIN|LEGS
+  
+/obj/item/clothing/under/costume/buttondown/slacks/sensors_off // for cantina guests so they dont get revealed by random sensors
+	sensor_mode = SENSOR_OFF
+	random_sensor = FALSE
