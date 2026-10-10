@@ -85,6 +85,13 @@
 
 	if(tracker)
 		stop_zooming(user)
+	// DOPPLER EDIT BEGIN - Wielding check for guns
+	if(isgun(source))
+		var/obj/item/gun/target_gun = source
+		if(!target_gun.wielded)
+			user.balloon_alert("wield first!")
+			return ITEM_INTERACT_BLOCKING
+	// DOPPLER EDIT END
 	else
 		zoom(user)
 	return ITEM_INTERACT_BLOCKING

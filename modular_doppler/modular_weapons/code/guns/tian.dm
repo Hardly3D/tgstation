@@ -28,6 +28,9 @@
 	weapon_weight = WEAPON_HEAVY
 	pb_knockback = 2
 	recoil = 2
+	recoil_unwielded = 6
+	spread_unwielded = 20
+	wield_delay = 1.0 SECONDS
 	fire_delay = 0.6 SECONDS
 
 /obj/item/gun/ballistic/marsian_super_rifle/add_bayonet_point()

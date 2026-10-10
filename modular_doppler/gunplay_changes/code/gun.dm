@@ -220,63 +220,11 @@
 	wield_slowdown = PDW_SLOWDOWN
 	aimed_wield_slowdown = SMG_AIM_SLOWDOWN
 
-/// PISTOLS
-
-/obj/item/gun/ballistic/automatic/pistol
-	wield_delay = 0.2 SECONDS
-	recoil = 0.2
-	recoil_unwielded = 3
-	spread = 0
-	spread_unwielded = 7
-	wield_slowdown = PISTOL_SLOWDOWN
-	aimed_wield_slowdown = PISTOL_AIM_SLOWDOWN
-
-/obj/item/gun/ballistic/automatic/pistol/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/scope, range_modifier = 0.2, scope_icon = FALSE)
-
-/obj/item/gun/ballistic/automatic/pistol/deagle
-	wield_delay = 0.55 SECONDS
-	recoil = 0.5
-	recoil_unwielded = 2
-	spread = 0
-	spread_unwielded = 10
-
 /// SMGS
 
 /obj/item/gun/ballistic/automatic/c20r
 	recoil = 0.2
 	recoil_unwielded = 1.5
-
-/// REVOLVERS
-
-/obj/item/gun/ballistic/revolver
-	dry_fire_text = "snap"
-	recoil_unwielded = 2
-
-	wield_slowdown = REVOLVER_SLOWDOWN
-	aimed_wield_slowdown = PISTOL_AIM_SLOWDOWN
-
-/obj/item/gun/ballistic/shotgun
-	recoil = 0.5
-	recoil_unwielded = 6 // Should only happen with sawoff or unique shotguns (Warden, Bulldog, etc)
-
-	wield_slowdown = SHOTGUN_SLOWDOWN
-	aimed_wield_slowdown = SHOTGUN_AIM_SLOWDOWN
-	wield_delay = 0.8 SECONDS
-
-/obj/item/gun/ballistic/shotgun/bulldog
-	recoil = 0.2
-
-	wield_slowdown = HEAVY_SHOTGUN_SLOWDOWN
-	wield_delay = 0.65 SECONDS // More compact or something
-
-/obj/item/gun/ballistic/shotgun/automatic
-	recoil = 0.3
-
-/obj/item/gun/ballistic/shotgun/musket // What the fuck do you mean this is a shotgun
-	wield_slowdown = RIFLE_SLOWDOWN
-	aimed_wield_slowdown = RIFLE_AIM_SLOWDOWN
 
 /obj/item/proc/unique_action(mob/living/user)
 	if(SEND_SIGNAL(src, COMSIG_ITEM_UNIQUE_ACTION, user))
@@ -287,6 +235,9 @@
 	return
 
 /// ENERGY
+
+
+/// TODO: SMG!!! AUTOMAGIC!! ASSAULT RIFLES!!! MAYBE MERGE IT WITH MODULAR GUNS also osako energy marcielle
 
 /obj/item/gun/energy
 	spread = 0
